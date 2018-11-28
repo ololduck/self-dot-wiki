@@ -1,0 +1,4 @@
+recursive-include self_wiki/templates *
+recursive-include self_wiki/static *
+include README.md
+include Pipfile

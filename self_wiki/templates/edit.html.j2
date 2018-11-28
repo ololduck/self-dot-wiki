@@ -1,0 +1,8 @@
+{% extends "base.html.j2" %}
+{% block content %}
+    <textarea id="edit" autofocus class="mousetrap">
+{{ page.md or '# ' + page.title }}
+
+
+</textarea>
+{% endblock %}

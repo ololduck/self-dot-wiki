@@ -1,0 +1,21 @@
+<html>
+<head>
+    <link rel="stylesheet/less" type="text/css" href="{{ url_for('static', filename='style.less') }}"/>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <script src="{{ url_for('static', filename='less.3.8.1.js') }}"></script>
+    <script src="{{ url_for('static', filename='mousetrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+    <title>{{ title }}</title>
+</head>
+<body>
+{% block todo %}
+    <h1>Todo(s)</h1>
+    <ul id="todoList">
+    </ul>
+{% endblock %}
+{% block content %}
+
+{% endblock %}
+<script type="text/javascript">window.onload = init;</script>
+</body>
+</html>

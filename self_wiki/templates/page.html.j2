@@ -1,0 +1,11 @@
+{% extends 'base.html.j2' %}
+{% block content %}
+    <div id="main">
+        {{ page.render() }}
+    </div>
+    <ul id="childPages">
+        {% for child_page in page.subpages %}
+            <li class="childPage"><a href="{{ child_page.relpath }}">{{ child_page.title }}</a></li>
+        {% endfor %}
+    </ul>
+{% endblock %}
