@@ -4,6 +4,10 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+bumpversion = "*"
+tox = "*"
+pytest = "*"
+pytest-sugar = "*"
 
 [packages]
 flask = "*"
