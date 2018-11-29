@@ -31,5 +31,10 @@ That will give you a werkzeug-powered server listening on port 5000.
 
 Maybe i will make a more user-friendly way in the future. I don't know.
 
+UPDATE: you can now install using pip:
+
+    pip install https://vit.am/gitea/paulollivier/self-dot-wiki/archive/master.tar.gz
+
+[self.wiki]: https://vit.am/gitea/paulollivier/self-dot-wiki
 [`uzbl`]: https://www.uzbl.org/
 [tiddlywiki]: https://tiddlywiki.com/
