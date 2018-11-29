@@ -44,7 +44,22 @@ Then, simply run the included script:
 Configuration is kept to a minimum. There is a single configurable environment variable: `SELF_WIKI_CONTENT_ROOT`,
 defaulted to `~/.self.wiki`. [self.wiki] will store its markdown files there.
 
+## Special thanks
+
+This project uses many open-source libraries:
+
+* [flask]
+* [pymarkdown]
+* [milligram]
+* [mousetrap.js]
+
+Special thanks to those.
+
 [self.wiki]: https://vit.am/gitea/paulollivier/self-dot-wiki
 [releases]: https://vit.am/gitea/paulollivier/self-dot-wiki/realeases
 [`uzbl`]: https://www.uzbl.org/
 [tiddlywiki]: https://tiddlywiki.com/
+[flask]: https://flask.pocoo.org/
+[pymarkdown]: https://python-markdown.github.io/
+[milligram]: https://milligram.io/
+[mousetrap.js]: https://craig.is/killing/mice
