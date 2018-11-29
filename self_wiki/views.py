@@ -8,10 +8,9 @@ from os.path import dirname, exists, expanduser, isdir, join
 from self_wiki import app, logger
 
 CONTENT_ROOT = expanduser(os.environ.get('SELF_WIKI_CONTENT_ROOT', None) or '~/.self.wiki/')
+logger.info('Using %s as content root', CONTENT_ROOT)
 if not exists(CONTENT_ROOT):
     os.mkdir(CONTENT_ROOT)
-
-__version__ = '0.1.0'
 
 MD_EXTS = [
     'extra',
@@ -23,6 +22,8 @@ MD_EXTS = [
     'toc',
     'wikilinks'
 ]
+
+logger.info('Enabled markdown extensions: %s', ', '.join(MD_EXTS))
 
 
 class Page(object):
