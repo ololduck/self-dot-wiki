@@ -30,7 +30,7 @@ Mousetrap.bind('ctrl+c d', function (e) {
         let xhr = new XMLHttpRequest();
         xhr.open('delete', window.location.toString());
         xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.send(JSON.stringify({'markdown': document.getElementById('edit').value}));
+        xhr.send();
     }
 });
 
