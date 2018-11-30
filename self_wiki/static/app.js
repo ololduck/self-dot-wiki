@@ -39,6 +39,7 @@ function delTodo(id) {
     xhr.open('delete', '/todo');
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.send(JSON.stringify({'id': id}));
+    document.getElementById('todo_' + id).remove();
 }
 
 function toggleTodoDone(id) {
@@ -60,8 +61,9 @@ function getTodoList() {
             let list = document.getElementById('todoList');
             list.innerHTML = '';
             JSON.parse(xhr.responseText).forEach(function (todo) {
-                list.innerHTML += `<li id="${todo.id}" class="${todo.done ? 'done' : 'notdone'}" onclick="toggleTodoDone(${todo.id})">${todo.text}<button 
-class="delete-button" onclick="delTodo(${todo.id})">x</button></li>`;
+                list.innerHTML += `<li id="${todo.id}" >
+<button class="button" onclick="delTodo(${todo.id})">del</button>
+<span class="${todo.done ? 'done' : 'notdone'}" onclick="toggleTodoDone(${todo.id})">${todo.text}</span></li>`;
             });
         }
     };
@@ -83,6 +85,9 @@ function saveCurrentPage() {
 }
 
 function init() {
+    // generate accesskeys
+    keykeeper();
+    // get todolist, then set periodicity
     getTodoList();
-    setInterval(getTodoList, 10000);
+    SELF_WIKI.todoThread = setInterval(getTodoList, 10000);
 }
