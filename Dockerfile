@@ -12,4 +12,4 @@ RUN pip install .
 VOLUME $SELF_WIKI_CONTENT_ROOT
 EXPOSE 5000
 
-CMD ["self.wiki", "-p", "5000"]
+CMD ["self.wiki", "--host", "0.0.0.0", "-p", "5000"]
