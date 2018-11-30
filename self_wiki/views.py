@@ -1,5 +1,6 @@
 import json
 import os
+from datetime import date
 from flask import jsonify, redirect, render_template, request
 from flask.views import MethodView
 from markdown import Markdown
@@ -127,6 +128,24 @@ class TodoList(object):
 todo_list = TodoList()
 
 
+def write_todo_to_journal(todo: dict):
+    p = Page(date.today().strftime('journal/%Y/%m/%d'))
+    # load existing
+    p.load()
+    if p.md == '':
+        # we are freeeee
+        p.md = '''# journal du {d}
+        
+        ## Done
+        
+        * {id}: {text}
+        '''.format(d=date.today().strftime('%Y/%m/%d'), **todo)
+        p.save()
+        return
+    p.md = p.md + '\n* {id}: {text}'.format(**todo)
+    p.save()
+
+
 class TodoView(MethodView):
     methods = ['GET', 'POST', 'PUT', 'DELETE']
 
@@ -150,6 +169,9 @@ class TodoView(MethodView):
             return 'Expected json', 400
         for i in range(0, len(todo_list.todos)):
             if request.json['id'] == todo_list.todos[i]['id']:
+                # let's move the item to the day's journal
+                if 'done' in todo_list.todos[i].keys() and todo_list.todos[i]['done']:
+                    write_todo_to_journal(todo_list.todos[i])
                 del todo_list.todos[i]
                 return 'OK', 200
         return 'Could not find specified element', 404

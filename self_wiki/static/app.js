@@ -39,11 +39,11 @@ function delTodo(id) {
     xhr.open('delete', '/todo');
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.send(JSON.stringify({'id': id}));
-    document.getElementById('todo_' + id).remove();
+    document.getElementById('todo_' + id).parentElement.remove();
 }
 
 function toggleTodoDone(id) {
-    let todo = document.getElementById(id);
+    let todo = document.getElementById("todo_" + id);
     if (todo.className === "notdone")
         todo.className = 'done';
     else
@@ -61,9 +61,8 @@ function getTodoList() {
             let list = document.getElementById('todoList');
             list.innerHTML = '';
             JSON.parse(xhr.responseText).forEach(function (todo) {
-                list.innerHTML += `<li id="${todo.id}" >
-<button class="button" onclick="delTodo(${todo.id})">del</button>
-<span class="${todo.done ? 'done' : 'notdone'}" onclick="toggleTodoDone(${todo.id})">${todo.text}</span></li>`;
+                list.innerHTML += `<li><button class="button" onclick="delTodo(${todo.id})">del</button>
+<span id="todo_${todo.id}" class="${todo.done ? 'done' : 'notdone'}" onclick="toggleTodoDone(${todo.id})">${todo.text}</span></li>`;
             });
         }
     };
