@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
         name='self.wiki',
-        version='0.2.0',
+        version='0.3.0',
         packages=['self_wiki'],
         url='https://vit.am/paulollivier/self-dot-wiki',
         license='Do Whatever You Want',
