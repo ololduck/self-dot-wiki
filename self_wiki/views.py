@@ -173,6 +173,7 @@ class TodoView(MethodView):
                 if 'done' in todo_list.todos[i].keys() and todo_list.todos[i]['done']:
                     write_todo_to_journal(todo_list.todos[i])
                 del todo_list.todos[i]
+                todo_list.save()
                 return 'OK', 200
         return 'Could not find specified element', 404
 
@@ -206,8 +207,22 @@ def delete(path):
 
 @app.route('/edit', defaults={'path': 'index'})
 @app.route('/<path:path>/edit')
-def edit(path):
+def edit(path):  # Nooooon rien de rien....
     return render_template('edit.html.j2', page=Page(path))
+
+
+@app.route('/upload', defaults={'path': 'index'}, methods=['POST'])
+@app.route('/<path:path>/upload', methods=['POST'])
+def upload(path):
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            return 'Error: no files in request', 400
+        file = request.files['file']
+        if file.filename == '':
+            return 'Error: Empty file name', 400
+        if file:
+            file.save(join(path, file.filename))
+            return jsonify(message='OK', path=join('/', path, file.filename)), 201
 
 
 @app.route('/', defaults={'path': 'index'})
