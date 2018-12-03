@@ -1,10 +1,11 @@
 import json
 import os
+import re
 from datetime import date
-from flask import jsonify, redirect, render_template, request
+from flask import jsonify, redirect, render_template, request, send_from_directory
 from flask.views import MethodView
 from markdown import Markdown
-from os.path import dirname, exists, expanduser, isdir, join
+from os.path import basename, dirname, exists, expanduser, isdir, join
 
 from self_wiki import app, logger
 
@@ -142,7 +143,10 @@ def write_todo_to_journal(todo: dict):
         '''.format(d=date.today().strftime('%Y/%m/%d'), **todo)
         p.save()
         return
-    p.md = p.md + '\n* {id}: {text}'.format(**todo)
+    match = re.match(r'#+ *Done\n+')
+    if not match:
+        p.md = p.md + '\n\n## Done\n\n'
+    p.md = p.md + '* {id}: {text}\n'.format(**todo)
     p.save()
 
 
@@ -194,6 +198,20 @@ def save(path):
     return 'OK', 201
 
 
+@app.route('/edit/upload', defaults={'path': 'index'}, methods=['POST'])
+@app.route('/<path:path>/edit/upload', methods=['POST'])
+def upload(path):
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            return 'Error: no files in request', 400
+        file = request.files['file']
+        if file.filename == '':
+            return 'Error: Empty file name', 400
+        if file:
+            file.save(join(path, file.filename))
+            return jsonify(message='OK', path=join('/', path, file.filename)), 201
+
+
 @app.route('/', defaults={'path': 'index'}, methods=['DELETE'])
 @app.route('/<path:path>', methods=['DELETE'])
 def delete(path):
@@ -211,23 +229,11 @@ def edit(path):  # Nooooon rien de rien....
     return render_template('edit.html.j2', page=Page(path))
 
 
-@app.route('/upload', defaults={'path': 'index'}, methods=['POST'])
-@app.route('/<path:path>/upload', methods=['POST'])
-def upload(path):
-    if request.method == 'POST':
-        if 'file' not in request.files:
-            return 'Error: no files in request', 400
-        file = request.files['file']
-        if file.filename == '':
-            return 'Error: Empty file name', 400
-        if file:
-            file.save(join(path, file.filename))
-            return jsonify(message='OK', path=join('/', path, file.filename)), 201
-
-
 @app.route('/', defaults={'path': 'index'})
 @app.route('/<path:path>')
 def page(path):
+    if not str(path).endswith('/') and exists(join(CONTENT_ROOT, path)):
+        return send_from_directory(join(CONTENT_ROOT, dirname(path)), basename(path))
     if str(path).endswith('/'):
         return redirect(path[:-1])
     p = Page(path)
