@@ -33,6 +33,7 @@ def create_help_page():
         ### Editor only (`/**/edit`)
         
         * `ctrl+c,s`: Save currently edited page;
+        * `alt+maj+f` (on firefox): send a file
         '''
 
 

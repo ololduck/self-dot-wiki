@@ -17,11 +17,20 @@ Here's what my feature list draft looked like:
     - [x] add
     - [ ] delete
     - [ ] update status
-- [ ] I should be able to navigate links without using weird browsers like [`uzbl`]
+- [x] I should be able to navigate links without using weird browsers like [`uzbl`]
 
 That's more or less it.
 
 I looked at several other solutions, including [tiddlywiki], but it was too mouse-based for my tastes.
+
+## Important security note:
+
+[self.wiki] should *not* be publicly accessible! Any potential mean-inclined person could steal valuable secrets from
+your computer via this application! That is because we allow a potential attacker to request files outside of
+[self.wiki]'s `CONTENT_ROOT`.
+
+If you don't specify a `--host` argument, [self.wiki] will listen only on the local computer, and should therefore be
+safe to use.
 
 ## Installation
 Install using pip, using the `master` branch, or by picking a release in the [releases] tab:
@@ -43,6 +52,11 @@ Then, simply run the included script:
 
 Configuration is kept to a minimum. There is a single configurable environment variable: `SELF_WIKI_CONTENT_ROOT`,
 defaulted to `~/.self.wiki`. [self.wiki] will store its markdown files there.
+
+## Usage
+
+After having started `self.wiki`, go to your navigator, open up http://localhost:4000/. Pressing `?` will open \
+http://localhost:4000/help.
 
 ## Special thanks
 

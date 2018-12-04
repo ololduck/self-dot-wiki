@@ -6,8 +6,25 @@ Mousetrap.bind('?', function (event) {
 });
 
 Mousetrap.bind('ctrl+c s', function (e) {
+    e.preventDefault();
     saveCurrentPage();
 });
+
+function sendFile() {
+    const input = document.getElementById('file-input');
+    const formData = new FormData();
+    for (let i = 0; i < input.files.length; i++) {
+        formData.append('file', input.files[i], input.files[i].filename);
+    }
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', window.location.toString() + '/upload');
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 201) {
+            console.log("files sent");
+        }
+    };
+    xhr.send(formData);
+}
 
 Mousetrap.bind('ctrl+c n', function (e) {
     let text = prompt('', 'todo text');
