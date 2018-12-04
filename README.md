@@ -53,6 +53,11 @@ Then, simply run the included script:
 Configuration is kept to a minimum. There is a single configurable environment variable: `SELF_WIKI_CONTENT_ROOT`,
 defaulted to `~/.self.wiki`. [self.wiki] will store its markdown files there.
 
+## Usage
+
+After having started `self.wiki`, go to your navigator, open up http://localhost:4000/. Pressing `?` will open \
+http://localhost:4000/help.
+
 ## Special thanks
 
 This project uses many open-source libraries:

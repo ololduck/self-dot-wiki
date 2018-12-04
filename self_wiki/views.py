@@ -208,7 +208,9 @@ def upload(path):
         if file.filename == '':
             return 'Error: Empty file name', 400
         if file:
-            file.save(join(path, file.filename))
+            if path == 'index':
+                path = ''
+            file.save(join(CONTENT_ROOT, path, file.filename))
             return jsonify(message='OK', path=join('/', path, file.filename)), 201
 
 
