@@ -4,6 +4,7 @@ let keykeeper = function (elementId) {
      *
      */
     let e = document.getElementsByTagName('body')[0];
+    keykeeper.removeHardCodedFromAvailable();
     if (elementId !== undefined)
         e = document.getElementById(elementId);
     let listOfLinks = e.getElementsByTagName('a');
@@ -39,4 +40,12 @@ let keykeeper = function (elementId) {
     addMarkup(listOfLinks);
 };
 keykeeper.available = 'abcdefghijklmnopqrstuvwxyz';
+keykeeper.removeHardCodedFromAvailable = function () {
+    const elems = document.querySelectorAll('[accesskey]');
+    for (let elem in elems) {
+        if (elem.accessKey in keykeeper.available) {
+            keykeeper.available = keykeeper.available.replace(elem.accessKey, '');
+        }
+    }
+};
 keykeeper.links = new Map();
