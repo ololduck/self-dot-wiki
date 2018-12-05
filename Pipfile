@@ -12,6 +12,7 @@ pytest-sugar = "*"
 [packages]
 flask = "*"
 markdown = "*"
+pygments = "*"
 
 [requires]
 python_version = "3.7"
