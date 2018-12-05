@@ -14,10 +14,39 @@ h1 {
   height: 100%;
 }
 
+.admonition-title {
+  font-size: 1.3em;
+  font-style: italic;
+}
+
+.admonition {
+  padding: 1em;
+  border-left-style: solid;
+  border-left-width: 0.2em;
+  margin-bottom: 1em;
+}
+
+.attention, .warning, .caution, .important {
+  background-color: orange;
+  border-left-color: darken(orange, 30%);
+}
+
+.danger, .error {
+  background-color: red;
+  border-left-color: darken(red, 30%);
+}
+
+.hint, .note, .tip {
+  background-color: lightblue;
+  border-left-color: darken(lightblue, 30%);
+}
+
+
 #todoList {
   li {
     list-style: none;
   }
+
   .done {
     text-decoration: line-through;
   }
