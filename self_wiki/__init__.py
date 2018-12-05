@@ -1,7 +1,7 @@
 import logging
 from flask import Flask
 
-__version__ = '0.4.3'
+__version__ = '0.4.4'
 
 app = Flask(__name__)
 
