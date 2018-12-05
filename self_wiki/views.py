@@ -136,11 +136,11 @@ def write_todo_to_journal(todo: dict):
     if p.md == '':
         # we are freeeee
         p.md = '''# journal du {d}
-        
-        ## Done
-        
-        * {id}: {text}
-        '''.format(d=date.today().strftime('%Y/%m/%d'), **todo)
+
+## Done
+
+* {id}: {text}
+'''.format(d=date.today().strftime('%Y/%m/%d'), **todo)
         p.save()
         return
     match = re.match(r'#+ *Done\n+')
@@ -210,7 +210,7 @@ def upload(path):
         if file:
             if path == 'index':
                 path = ''
-            file.save(join(CONTENT_ROOT, path, file.filename))
+            file.save(join(CONTENT_ROOT, dirname(path), file.filename))
             return jsonify(message='OK', path=join('/', path, file.filename)), 201
 
 
