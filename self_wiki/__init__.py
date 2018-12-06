@@ -3,7 +3,7 @@ import os
 from flask import Flask
 from os.path import exists, expanduser
 
-__version__ = '0.4.4'
+__version__ = '0.5.0'
 
 app = Flask(__name__)
 
