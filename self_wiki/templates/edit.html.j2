@@ -1,8 +1,18 @@
 {% extends "base.html.j2" %}
+{% block additionnal_head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='lib/editor/simplemde.min.css') }}"/>
+    <script type="text/javascript" src="{{ url_for('static', filename='lib/editor/simplemde.min.js') }}"></script>
+{% endblock %}
+
 {% block content %}
     <h1>Editing {{ page.title }}</h1>
     <input id="file-input" type="file" name="file" style="display: none;" multiple accesskey="f" oninput="sendFile()"/>
-    <textarea id="edit" autofocus class="mousetrap" rows="10">
+    <input id="saveButton" type="button" name="save" style="display: none" accesskey="s"
+           onclick="saveCurrentPage(editor)"/>
+    <textarea id="edit" class="mousetrap">
 {{ page.md or '# ' + page.title }}
 </textarea>
+    <script type="text/javascript">
+        var editor = new SimpleMDE({spellChecker: false});
+    </script>
 {% endblock %}

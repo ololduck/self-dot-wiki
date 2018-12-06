@@ -1,15 +1,5 @@
 var SELF_WIKI = {};
 
-Mousetrap.bind('?', function (event) {
-    let notifSpace = document.getElementById('notifSpace');
-    // popout the shortcut list
-});
-
-Mousetrap.bind('ctrl+c s', function (e) {
-    e.preventDefault();
-    saveCurrentPage();
-});
-
 function sendFile() {
     const input = document.getElementById('file-input');
     const formData = new FormData();
@@ -88,7 +78,7 @@ function getTodoList() {
     xhr.send();
 }
 
-function saveCurrentPage() {
+function saveCurrentPage(editor) {
     let xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function () {
         if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 201) {
@@ -97,7 +87,7 @@ function saveCurrentPage() {
     };
     xhr.open('put', window.location.toString() + '/save');
     xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.send(JSON.stringify({'markdown': document.getElementById('edit').value}));
+    xhr.send(JSON.stringify({'markdown': editor.value()}));
 }
 
 function init() {

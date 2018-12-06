@@ -5,14 +5,9 @@ from datetime import date
 from flask import jsonify, redirect, render_template, request, send_from_directory
 from flask.views import MethodView
 from markdown import Markdown
-from os.path import basename, dirname, exists, expanduser, isdir, join
+from os.path import basename, dirname, exists, isdir, join
 
-from self_wiki import app, logger
-
-CONTENT_ROOT = expanduser(os.environ.get('SELF_WIKI_CONTENT_ROOT', None) or '~/.self.wiki/')
-logger.info('Using %s as content root', CONTENT_ROOT)
-if not exists(CONTENT_ROOT):
-    os.mkdir(CONTENT_ROOT)
+from self_wiki import CONTENT_ROOT, app, logger
 
 MD_EXTS = [
     'extra',

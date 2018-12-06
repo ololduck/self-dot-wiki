@@ -1,15 +1,17 @@
 <html>
 <head>
+    <link rel="stylesheet/less" type="text/css" href="{{ url_for('static', filename='lib/milligram.min.css') }}"/>
+    <link rel="stylesheet/less" type="text/css" href="{{ url_for('static', filename='lib/monokai.css') }}"/>
     <link rel="stylesheet/less" type="text/css" href="{{ url_for('static', filename='style.less') }}"/>
-    <link rel="stylesheet/less" type="text/css" href="{{ url_for('static', filename='milligram.min.css') }}"/>
-    <link rel="stylesheet/less" type="text/css" href="{{ url_for('static', filename='monokai.css') }}"/>
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    <script src="{{ url_for('static', filename='less.3.8.1.js') }}"></script>
-    <script src="{{ url_for('static', filename='mousetrap.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='moment.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/less.3.8.1.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/mousetrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/moment.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/keykeeper.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/accesskey.js') }}"></script>
+    {% block additionnal_head %}
+    {% endblock %}
     <script src="{{ url_for('static', filename='app.js') }}"></script>
-    <script src="{{ url_for('static', filename='keykeeper.js') }}"></script>
-    <script src="{{ url_for('static', filename='accesskey.js') }}"></script>
     <title>self.wiki {{ page.title or title }}</title>
 </head>
 <body>

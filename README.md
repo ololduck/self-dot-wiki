@@ -55,8 +55,10 @@ defaulted to `~/.self.wiki`. [self.wiki] will store its markdown files there.
 
 ## Usage
 
-After having started `self.wiki`, go to your navigator, open up http://localhost:4000/. Pressing `?` will open \
+After having started `self.wiki`, go to your navigator, open up http://localhost:4000/. Help should be available at
 http://localhost:4000/help.
+
+If a page is not available, you will be redirected to its edit page, which is simply `/path/to/page/edit`.
 
 ## Special thanks
 

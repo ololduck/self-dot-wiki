@@ -43,7 +43,7 @@ keykeeper.available = 'abcdefghijklmnopqrstuvwxyz';
 keykeeper.removeHardCodedFromAvailable = function () {
     const elems = document.querySelectorAll('[accesskey]');
     for (let elem in elems) {
-        if (elem.accessKey in keykeeper.available) {
+        if (keykeeper.available.includes(elem.accessKey)) {
             keykeeper.available = keykeeper.available.replace(elem.accessKey, '');
         }
     }
