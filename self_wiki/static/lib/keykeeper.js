@@ -3,7 +3,7 @@ let keykeeper = function (elementId) {
      * generate access keys on page links
      *
      */
-    let e = document.getElementsByTagName('body')[0];
+    let e = document.body;
     keykeeper.removeHardCodedFromAvailable();
     if (elementId !== undefined)
         e = document.getElementById(elementId);
@@ -30,7 +30,7 @@ let keykeeper = function (elementId) {
                 // let's try a fallback by picking the first letter available
                 if (keykeeper.available.length === 0) {
                     console.log('Ran out of accessKeys to attribute!');
-                    break; //it doesn't make any sense to keep trying, even other links
+                    continue; // maybe we can find other links already added to the link map
                 }
                 elem.accessKey = keykeeper.available[0];
                 keykeeper.available = keykeeper.available.replace(keykeeper.available[0], '');

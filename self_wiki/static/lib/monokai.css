@@ -1,5 +1,7 @@
 .codehilite pre {
     background-color: #272822;
+    /* default color */
+    color: lightgray;
 }
 
 .codehilite .hll {

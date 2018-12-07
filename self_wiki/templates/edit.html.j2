@@ -13,6 +13,16 @@
 {{ page.md or '# ' + page.title }}
 </textarea>
     <script type="text/javascript">
-        var editor = new SimpleMDE({spellChecker: false});
+        var editor = new SimpleMDE({
+            autofocus: true,
+            autosave: {
+                enabled: true,
+                uniqueId: "{{  page.title }}"
+            },
+            forceSync: true,
+            spellChecker: false
+        });
+        // launch the autosave thread
+        SELF_WIKI.saveThread = setInterval(saveCurrentPage, 20000, [editor]);
     </script>
 {% endblock %}
