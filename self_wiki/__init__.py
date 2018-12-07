@@ -3,7 +3,7 @@ import os
 from flask import Flask
 from os.path import exists, expanduser, join
 
-__version__ = '0.5.0'
+__version__ = '0.5.1'
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
