@@ -7,20 +7,7 @@ from flask.views import MethodView
 from markdown import Markdown
 from os.path import basename, dirname, exists, isdir, join
 
-from self_wiki import CONTENT_ROOT, app, logger, repository
-
-MD_EXTS = [
-    'extra',
-    'admonition',
-    'codehilite',
-    'meta',
-    'sane_lists',
-    'smarty',
-    'toc',
-    'wikilinks'
-]
-
-logger.info('Enabled markdown extensions: %s', ', '.join(MD_EXTS))
+from self_wiki import CONTENT_ROOT, MD_EXTS, app, logger, repository
 
 
 class Page(object):

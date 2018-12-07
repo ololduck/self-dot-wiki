@@ -18,6 +18,18 @@ logger.info('Using %s as content root', CONTENT_ROOT)
 if not exists(CONTENT_ROOT):
     os.mkdir(CONTENT_ROOT)
 
+MD_EXTS = [
+    'extra',
+    'admonition',
+    'codehilite',
+    'meta',
+    'sane_lists',
+    'smarty',
+    'toc',
+    'wikilinks'
+]
+logger.info('Enabled markdown extensions: %s', ', '.join(MD_EXTS))
+
 repository = None
 if exists(join(CONTENT_ROOT, '.git')):
     repository = Repo(CONTENT_ROOT)
