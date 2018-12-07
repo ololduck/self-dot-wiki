@@ -2,7 +2,7 @@ import logging
 import os
 from flask import Flask
 from git import Repo
-from os.path import exists, expanduser, join
+from os.path import exists, expanduser, join as pjoin
 
 __version__ = '0.6.1'
 
@@ -31,7 +31,7 @@ MD_EXTS = [
 logger.info('Enabled markdown extensions: %s', ', '.join(MD_EXTS))
 
 repository = None
-if exists(join(CONTENT_ROOT, '.git')):
+if exists(pjoin(CONTENT_ROOT, '.git')):
     repository = Repo(CONTENT_ROOT)
     logger.info('Git integration is enabled. self.wiki will commit changes')
 

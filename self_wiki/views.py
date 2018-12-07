@@ -5,7 +5,7 @@ from datetime import date
 from flask import jsonify, redirect, render_template, request, send_from_directory
 from flask.views import MethodView
 from markdown import Markdown
-from os.path import basename, dirname, exists, isdir, join
+from os.path import basename, dirname, exists, isdir, join as pjoin
 
 from self_wiki import CONTENT_ROOT, MD_EXTS, app, logger, repository
 
@@ -20,7 +20,7 @@ class Page(object):
         return p
 
     def __init__(self, path):
-        self.path = join(CONTENT_ROOT, path)
+        self.path = pjoin(CONTENT_ROOT, path)
         if path[-3:] != '.md':
             self.path = self.path + '.md'
         self.md = ''
@@ -39,7 +39,7 @@ class Page(object):
         if exists(subpages_dir) and isdir(subpages_dir):
             for f in os.listdir(subpages_dir):
                 logger.debug('Found child page %s', f)
-                self.subpages.append(Page(join(subpages_dir, f)))
+                self.subpages.append(Page(pjoin(subpages_dir, f)))
 
     def save(self):
         if os.path.sep in self.path and not exists(dirname(self.path)):
@@ -81,13 +81,13 @@ class TodoList(object):
         self.load()
 
     def load(self):
-        if not exists(join(CONTENT_ROOT, 'todos.json')):
+        if not exists(pjoin(CONTENT_ROOT, 'todos.json')):
             return
-        with open(join(CONTENT_ROOT, 'todos.json')) as f:
+        with open(pjoin(CONTENT_ROOT, 'todos.json')) as f:
             self._todos = json.load(f)
 
     def save(self):
-        with open(join(CONTENT_ROOT, 'todos.json'), 'w+') as f:
+        with open(pjoin(CONTENT_ROOT, 'todos.json'), 'w+') as f:
             json.dump(self.todos, f)
 
     def from_json(self, j: dict):
@@ -129,7 +129,7 @@ def write_todo_to_journal(todo: dict):
 '''.format(d=date.today().strftime('%Y/%m/%d'), **todo)
         p.save()
         return
-    match = re.match(r'#+ *Done\n+')
+    match = re.match(r'#+ *Done\n+', p.md)
     if not match:
         p.md = p.md + '\n\n## Done\n\n'
     p.md = p.md + '* {id}: {text}\n'.format(**todo)
@@ -195,12 +195,12 @@ def upload(path):
     if file:
         if path == 'index':
             path = ''
-        file.save(join(CONTENT_ROOT, dirname(path), file.filename))
+        file.save(pjoin(CONTENT_ROOT, dirname(path), file.filename))
         if repository is not None:
             logger.info('Adding file %s to git', file.filename)
             repository.index.add([file.filename])
             repository.index.commit(message="Add {}".format(file.filename))
-        return jsonify(message='OK', path=join('/', path, file.filename)), 201
+        return jsonify(message='OK', path=pjoin('/', path, file.filename)), 201
 
 
 @app.route('/', defaults={'path': 'index'}, methods=['DELETE'])
@@ -229,8 +229,8 @@ def edit(path):  # Nooooon rien de rien....
 @app.route('/', defaults={'path': 'index'})
 @app.route('/<path:path>')
 def page(path):
-    if not str(path).endswith('/') and exists(join(CONTENT_ROOT, path)):
-        return send_from_directory(join(CONTENT_ROOT, dirname(path)), basename(path))
+    if not str(path).endswith('/') and exists(pjoin(CONTENT_ROOT, path)):
+        return send_from_directory(pjoin(CONTENT_ROOT, dirname(path)), basename(path))
     if str(path).endswith('/'):
         return redirect(path[:-1])
     p = Page(path)
