@@ -11,5 +11,5 @@ setup(
         description='An opinionated wiki and todo manager',
         include_package_data=True,
         zip_safe=False,
-        install_requires=['flask', 'markdown', 'pygments']
+        install_requires=['flask', 'markdown', 'pygments', 'gitpython']
 )

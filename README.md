@@ -60,6 +60,12 @@ http://localhost:4000/help.
 
 If a page is not available, you will be redirected to its edit page, which is simply `/path/to/page/edit`.
 
+### Git integration
+
+If a `.git` repository is present at the root of the `SELF_WIKI_CONTENT_ROOT`, `self.wiki` will try to commit changes.
+
+Please note that they won't be pushed or pulled to a remote repository! I might add it in the future
+
 ## Special thanks
 
 This project uses many open-source libraries:
