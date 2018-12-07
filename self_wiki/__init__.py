@@ -1,6 +1,7 @@
 import logging
 import os
 from flask import Flask
+from git import Repo
 from os.path import exists, expanduser, join
 
 __version__ = '0.5.1'
@@ -17,6 +18,9 @@ logger.info('Using %s as content root', CONTENT_ROOT)
 if not exists(CONTENT_ROOT):
     os.mkdir(CONTENT_ROOT)
 
-
+repository = None
+if exists(join(CONTENT_ROOT, '.git')):
+    repository = Repo(CONTENT_ROOT)
+    logger.info('Git integration is enabled. self.wiki will commit changes')
 
 import self_wiki.views

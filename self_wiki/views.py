@@ -7,7 +7,7 @@ from flask.views import MethodView
 from markdown import Markdown
 from os.path import basename, dirname, exists, isdir, join
 
-from self_wiki import CONTENT_ROOT, app, logger
+from self_wiki import CONTENT_ROOT, app, logger, repository
 
 MD_EXTS = [
     'extra',
@@ -59,6 +59,10 @@ class Page(object):
             os.makedirs(dirname(self.path))
         with open(self.path, 'w+') as f:
             f.write(self.md)
+        if repository is not None:
+            logger.info('Adding changes to page %s to git', self.title)
+            repository.index.add([self.path])
+            repository.index.commit(message="Change {}".format(self.title))
 
     @property
     def relpath(self, include_extension=False):
@@ -196,17 +200,20 @@ def save(path):
 @app.route('/edit/upload', defaults={'path': 'index'}, methods=['POST'])
 @app.route('/<path:path>/edit/upload', methods=['POST'])
 def upload(path):
-    if request.method == 'POST':
-        if 'file' not in request.files:
-            return 'Error: no files in request', 400
-        file = request.files['file']
-        if file.filename == '':
-            return 'Error: Empty file name', 400
-        if file:
-            if path == 'index':
-                path = ''
-            file.save(join(CONTENT_ROOT, dirname(path), file.filename))
-            return jsonify(message='OK', path=join('/', path, file.filename)), 201
+    if 'file' not in request.files:
+        return 'Error: no files in request', 400
+    file = request.files['file']
+    if file.filename == '':
+        return 'Error: Empty file name', 400
+    if file:
+        if path == 'index':
+            path = ''
+        file.save(join(CONTENT_ROOT, dirname(path), file.filename))
+        if repository is not None:
+            logger.info('Adding file %s to git', file.filename)
+            repository.index.add([file.filename])
+            repository.index.commit(message="Add {}".format(file.filename))
+        return jsonify(message='OK', path=join('/', path, file.filename)), 201
 
 
 @app.route('/', defaults={'path': 'index'}, methods=['DELETE'])
@@ -215,9 +222,15 @@ def delete(path):
     p = Page(path)
     try:
         os.remove(p.path)
+        if repository is not None:
+            logger.info('Deleting page %s from git', p.title)
+            repository.index.add([p.path])
+            repository.index.commit(message="Delete {}".format(p.path))
         return 'OK', 201
     except OSError as e:
-        return 'Could not delete page: ' + str(e), 400
+        if repository is not None:
+            repository.index.remove(p.path)
+        return 'Could not delete page: ' + str(e), 404
 
 
 @app.route('/edit', defaults={'path': 'index'})

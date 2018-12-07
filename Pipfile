@@ -13,6 +13,7 @@ pytest-sugar = "*"
 flask = "*"
 markdown = "*"
 pygments = "*"
+gitpython = "*"
 
 [requires]
 python_version = "3.7"
