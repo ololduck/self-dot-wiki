@@ -23,6 +23,6 @@
             spellChecker: false
         });
         // launch the autosave thread
-        SELF_WIKI.saveThread = setInterval(saveCurrentPage, 20000, [editor]);
+        SELF_WIKI.saveThread = setInterval(saveCurrentPage, 20000, editor);
     </script>
 {% endblock %}
