@@ -4,7 +4,7 @@ from flask import Flask
 from git import Repo
 from os.path import exists, expanduser, join as pjoin
 
-__version__ = '0.6.1'
+__version__ = '0.6.2'
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
