@@ -8,6 +8,9 @@ from markdown import Markdown
 from os.path import basename, dirname, exists, isdir, join as pjoin
 
 from self_wiki import CONTENT_ROOT, MD_EXTS, app, logger, repository
+from self_wiki.utils import RecentFileManager
+
+recent_files = RecentFileManager(CONTENT_ROOT)
 
 
 class Page(object):
@@ -19,8 +22,10 @@ class Page(object):
         p.path = p.title
         return p
 
-    def __init__(self, path):
+
+    def __init__(self, path, level=0):
         self.path = pjoin(CONTENT_ROOT, path)
+        self.level = level
         if path[-3:] != '.md':
             self.path = self.path + '.md'
         self.md = ''
@@ -33,23 +38,31 @@ class Page(object):
         if not exists(self.path):
             return
         with open(self.path, 'r') as f:
+            logger.debug('Found existing page content at %s. Loading at level %d', self.path, self.level)
             self.md = f.read()
 
-        subpages_dir = self.path[:-3]
+        # We need a way to make sure we don't read an entire directory tree
+        if self.level > 0:
+            return
+        subpages_dir = self.path[:-3]  # remove the .md
         if exists(subpages_dir) and isdir(subpages_dir):
             for f in os.listdir(subpages_dir):
-                logger.debug('Found child page %s', f)
-                self.subpages.append(Page(pjoin(subpages_dir, f)))
+                if isdir(f) or not f.endswith('.md'):
+                    continue
+                logger.debug('Found child page %s at level %d', f, self.level)
+                self.subpages.append(Page(pjoin(subpages_dir, f), level=self.level + 1))
 
     def save(self):
         if os.path.sep in self.path and not exists(dirname(self.path)):
             os.makedirs(dirname(self.path))
         with open(self.path, 'w+') as f:
             f.write(self.md)
+        recent_files.update(self.path)
         if repository is not None:
-            logger.info('Adding changes to page %s to git', self.title)
             repository.index.add([self.path])
-            repository.index.commit(message="Change {}".format(self.title))
+            if repository.index.diff:
+                logger.info('Adding changes to page %s to git', self.title)
+                repository.index.commit(message="Change {}".format(self.title))
 
     @property
     def relpath(self, include_extension=False):
@@ -66,7 +79,7 @@ class Page(object):
             return self.meta['title'][0]
         for line in self.md.split('\n'):
             if line.startswith('# '):
-                return line[1:]
+                return line[2:]
         return self.path.replace(CONTENT_ROOT, '')[:-3]
 
     def render(self):
@@ -209,6 +222,7 @@ def delete(path):
     p = Page(path)
     try:
         os.remove(p.path)
+        recent_files.delete(p.path)
         if repository is not None:
             logger.info('Deleting page %s from git', p.title)
             repository.index.add([p.path])
@@ -223,17 +237,21 @@ def delete(path):
 @app.route('/edit', defaults={'path': 'index'})
 @app.route('/<path:path>/edit')
 def edit(path):  # Nooooon rien de rien....
-    return render_template('edit.html.j2', page=Page(path))
+    return render_template('edit.html.j2', page=Page(path),
+                           recent=(Page(f['path']) for f in recent_files.get(9)))
 
 
 @app.route('/', defaults={'path': 'index'})
 @app.route('/<path:path>')
 def page(path):
-    if not str(path).endswith('/') and exists(pjoin(CONTENT_ROOT, path)):
+    if not str(path).endswith('/') and \
+            exists(pjoin(CONTENT_ROOT, path)) and \
+            not isdir(pjoin(CONTENT_ROOT, path)):
         return send_from_directory(pjoin(CONTENT_ROOT, dirname(path)), basename(path))
     if str(path).endswith('/'):
         return redirect(path[:-1])
     p = Page(path)
     if p.md == '':
         return redirect(path + '/edit')
-    return render_template('page.html.j2', page=p)
+    return render_template('page.html.j2', page=p,
+                           recent=(Page(f['path']) for f in recent_files.get(9)))
