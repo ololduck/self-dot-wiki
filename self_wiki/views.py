@@ -22,7 +22,6 @@ class Page(object):
         p.path = p.title
         return p
 
-
     def __init__(self, path, level=0):
         self.path = pjoin(CONTENT_ROOT, path)
         self.level = level

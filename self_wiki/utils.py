@@ -68,6 +68,8 @@ class RecentFileManager(object):
         """
         if not limit:
             limit = self.DEFAULT_LIMIT
+        if len(self.__r) >= limit:
+            limit = len(self.__r) - 1  # 0-indexing makes do that sometimes
         return list(self.__r[:limit])
 
     def delete(self, path: str):
