@@ -18,6 +18,9 @@ class RecentFileManager(object):
                          limit=DEFAULT_LIMIT,
                          wanted_extensions: List[str] = ('md',)) -> List[dict]:
         """
+        Returns the list of files, sorted by modification time as a UNIX timestamp (recent first),
+        with an optional :param limit:.
+
         :param directory: Base directory for the search
         :type directory: str
         :param limit: number of results to return
@@ -45,7 +48,8 @@ class RecentFileManager(object):
 
     def __init__(self, root: str = CONTENT_ROOT):
         self.__root = root
-        self.__r = RecentFileManager.get_recent_files(limit=self.DEFAULT_LIMIT)
+        self.__r = RecentFileManager.get_recent_files(directory=root,
+                                                      limit=self.DEFAULT_LIMIT)
 
     def update(self, path: str):
         """
