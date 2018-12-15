@@ -46,10 +46,26 @@ class RecentFileManager(object):
         sorted_files = sorted(files, key=lambda x: x['mtime'], reverse=True)
         return sorted_files[:limit]
 
-    def __init__(self, root: str = CONTENT_ROOT):
+    def __init__(self, root: str = CONTENT_ROOT, wanted_extensions: List[str] = ('md',)):
         self.__root = root
         self.__r = RecentFileManager.get_recent_files(directory=root,
-                                                      limit=self.DEFAULT_LIMIT)
+                                                      limit=self.DEFAULT_LIMIT,
+                                                      wanted_extensions=wanted_extensions)
+
+    @property
+    def root(self):
+        return self.__root
+
+    def re_scan(self, limit: Optional[int] = None, wanted_extensions: List[str] = ('md',)):
+        """
+        Re-scans the defined content root
+        :param wanted_extensions: a list of file extensions we want to include. Specifying '' will include everything
+        :param limit: limit the number of results to this
+        :return:
+        """
+        self.__r = RecentFileManager.get_recent_files(directory=self.root,
+                                                      limit=limit,
+                                                      wanted_extensions=wanted_extensions)
 
     def update(self, path: str):
         """
@@ -64,16 +80,18 @@ class RecentFileManager(object):
         self.delete(path)
         self.__r.insert(0, {'path': path, 'mtime': now.timestamp()})
 
-    def get(self, limit: Optional[int]):
+    def get(self, limit: Optional[int] = None):
         """
         returns up to :param limit: recent items.
         :param limit:
         :return:
         """
+        if limit == 0:
+            raise ValueError("it doesn't make any sense to try to get an empty list... call list() yourself")
         if not limit:
             limit = self.DEFAULT_LIMIT
-        if len(self.__r) >= limit:
-            limit = len(self.__r) - 1  # 0-indexing makes do that sometimes
+        if len(self.__r) < limit:
+            limit = len(self.__r)
         return list(self.__r[:limit])
 
     def delete(self, path: str):
