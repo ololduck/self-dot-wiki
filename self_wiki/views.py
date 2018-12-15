@@ -11,7 +11,7 @@ from markdown import Markdown
 from os.path import basename, dirname, exists, isdir, join as pjoin
 
 from self_wiki import CONTENT_ROOT, MD_EXTS, app, logger, repository
-from self_wiki.utils import RecentFileManager
+from self_wiki.utils import RecentFileManager, TodoList
 
 RECENT_FILES = RecentFileManager(CONTENT_ROOT)
 
@@ -122,64 +122,7 @@ class Page:
         return html
 
 
-class TodoList:
-    """
-    A container for a collection of Todos
-    """
-    def __init__(self):
-        "Creates a new TodoList collection"
-        self._todos = []
-        self.load()
-
-    def load(self):
-        """
-        load a serialized collection from disk
-        """
-        if not exists(pjoin(CONTENT_ROOT, 'todos.json')):
-            return
-        with open(pjoin(CONTENT_ROOT, 'todos.json')) as todo_file:
-            self._todos = json.load(todo_file)
-
-    def save(self):
-        """
-        persist current collection on disk
-        :return:
-        """
-        with open(pjoin(CONTENT_ROOT, 'todos.json'), 'w+') as f:
-            json.dump(self.todos, f)
-
-    def from_json(self, j: dict):
-        """
-        Insert an element from a dictionary object. Tries to compensate for eventual missing id.
-        :param j: A dictionary containing at least a 'text' key
-        """
-        if 'id' not in j.keys():
-            j['id'] = self._get_next_available_id()
-        else:
-            already_existing = list(filter(lambda x: x['id'] == j['id'], self._todos))
-            if already_existing is not None and already_existing != []:
-                already_existing[0].update(j)
-                return
-        self._todos.append(j)
-        self.save()
-
-    @property
-    def todos(self):
-        """
-        Returns the internal object list.
-
-        Why not rename self._todos to self.todos? No idea.
-        """
-        return self._todos
-
-    def _get_next_available_id(self):
-        current_ids_list = map(lambda x: x['id'], self._todos)
-        for i in range(0, 1024):  # totally arbitrary limit
-            if i not in current_ids_list:
-                return i
-
-
-TODO_LIST = TodoList()
+TODO_LIST = TodoList(pjoin(CONTENT_ROOT, 'todos.json'))
 
 
 def write_todo_to_journal(todo: dict):
