@@ -1,3 +1,6 @@
+"""
+Code that should be executed on direct module call
+"""
 import logging
 import os
 from argparse import ArgumentParser
@@ -7,9 +10,10 @@ from self_wiki.views import Page
 
 
 def create_help_page():
-    p = Page('help')
-    if p.md == '':
-        p.md = '''
+    "Creates the help page"
+    page = Page('help')
+    if page.markdown == '':
+        page.markdown = '''
 # Help
 
 This page lists the keyboard shortcuts and other stuff related to [self.wiki].
@@ -35,10 +39,11 @@ The base idea is that [self.wiki] uses the `ctrl+c` prefix. All keyboard shortcu
 * `ctrl+c,s`: Save currently edited page;
 * `alt+maj+f` (on firefox): send a file
         '''
-        p.save()
+        page.save()
 
 
 def main():
+    "Main method, invoked when running self.wiki as a script"
     parser = ArgumentParser()
     parser.add_argument('--debug', default=False, help='Turns on debug mode', action='store_true')
     parser.add_argument('--host', default='localhost', help='address to bind on')

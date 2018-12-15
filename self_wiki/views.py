@@ -1,3 +1,6 @@
+"""
+Contains the flask views and their related objects
+"""
 import json
 import os
 import re
@@ -10,53 +13,73 @@ from os.path import basename, dirname, exists, isdir, join as pjoin
 from self_wiki import CONTENT_ROOT, MD_EXTS, app, logger, repository
 from self_wiki.utils import RecentFileManager
 
-recent_files = RecentFileManager(CONTENT_ROOT)
+RECENT_FILES = RecentFileManager(CONTENT_ROOT)
 
 
-class Page(object):
+class Page:
+    """
+    Container for a markdown file.
+
+    Basically, all manipulation on .md files should go via this
+    """
 
     @classmethod
-    def from_md(cls, md):
-        p = Page('bogus_path')  # fixme, i'm ugly
-        p.md = md
-        p.path = p.title
-        return p
+    def from_md(cls, markdown: str):
+        """
+        Creates a Page object from some markdown content
+
+        :param markdown:
+        :return:
+        """
+        bogus_page = Page('bogus_path')  # fixme, i'm ugly
+        bogus_page.markdown = markdown
+        bogus_page.path = bogus_page.title
+        return bogus_page
 
     def __init__(self, path, level=0):
         self.path = pjoin(CONTENT_ROOT, path)
         self.level = level
         if path[-3:] != '.md':
             self.path = self.path + '.md'
-        self.md = ''
+        self.markdown = ''
         self.converter = Markdown(extensions=MD_EXTS, output_format='html5')
         self.meta = None
         self.subpages = []
         self.load()
 
     def load(self):
+        """
+        loads the markdown data from disk and sets object properties according to filesystem state
+        :return:
+        """
         if not exists(self.path):
             return
-        with open(self.path, 'r') as f:
-            logger.debug('Found existing page content at %s. Loading at level %d', self.path, self.level)
-            self.md = f.read()
+        with open(self.path, 'r') as markdown_file:
+            logger.debug('Found existing page content at %s. '
+                         'Loading at level %d', self.path, self.level)
+            self.markdown = markdown_file.read()
 
         # We need a way to make sure we don't read an entire directory tree
         if self.level > 0:
             return
         subpages_dir = self.path[:-3]  # remove the .md
         if exists(subpages_dir) and isdir(subpages_dir):
-            for f in os.listdir(subpages_dir):
-                if isdir(f) or not f.endswith('.md'):
+            for markdown_file in os.listdir(subpages_dir):
+                if isdir(markdown_file) or not markdown_file.endswith('.md'):
                     continue
-                logger.debug('Found child page %s at level %d', f, self.level)
-                self.subpages.append(Page(pjoin(subpages_dir, f), level=self.level + 1))
+                logger.debug('Found child page %s at level %d', markdown_file, self.level)
+                self.subpages.append(Page(pjoin(subpages_dir, markdown_file), level=self.level + 1))
 
     def save(self):
+        """
+        persist the Page object on disk, and update the recent files list.
+        :return:
+        """
         if os.path.sep in self.path and not exists(dirname(self.path)):
             os.makedirs(dirname(self.path))
-        with open(self.path, 'w+') as f:
-            f.write(self.md)
-        recent_files.update(self.path)
+        with open(self.path, 'w+') as save_file:
+            save_file.write(self.markdown)
+        RECENT_FILES.update(self.path)
         if repository is not None:
             repository.index.add([self.path])
             if repository.index.diff:
@@ -64,45 +87,72 @@ class Page(object):
                 repository.index.commit(message="Change {}".format(self.title))
 
     @property
-    def relpath(self, include_extension=False):
+    def relpath(self):
+        """
+        returns the page's path, relative to the configured content root.
+        """
         path = self.path[len(CONTENT_ROOT) - 1:]
-        if not include_extension:
-            path = path[:path.rfind('.md')]
         return path
 
     @property
     def title(self):
+        """
+        returns the title of the page.
+
+        This is computed either from the markdown's metadata ('Title:' as one of the pages' header),
+        or the first level 1 header, or the pages' path
+        :return:
+        """
         if not self.meta:
             self.render()
         if 'title' in self.meta:
             return self.meta['title'][0]
-        for line in self.md.split('\n'):
+        for line in self.markdown.split('\n'):
             if line.startswith('# '):
                 return line[2:]
-        return self.path.replace(CONTENT_ROOT, '')[:-3]
+        return self.relpath[:-3]
 
     def render(self):
-        html = self.converter.convert(self.md)
-        self.meta = self.converter.Meta
+        """
+        renders the markdown to HTML, using the object's converter.
+        :return:
+        """
+        html = self.converter.convert(self.markdown)
+        self.meta = self.converter.Meta  # pylint: disable=E1101
         return html
 
 
-class TodoList(object):
+class TodoList:
+    """
+    A container for a collection of Todos
+    """
     def __init__(self):
+        "Creates a new TodoList collection"
         self._todos = []
         self.load()
 
     def load(self):
+        """
+        load a serialized collection from disk
+        """
         if not exists(pjoin(CONTENT_ROOT, 'todos.json')):
             return
-        with open(pjoin(CONTENT_ROOT, 'todos.json')) as f:
-            self._todos = json.load(f)
+        with open(pjoin(CONTENT_ROOT, 'todos.json')) as todo_file:
+            self._todos = json.load(todo_file)
 
     def save(self):
+        """
+        persist current collection on disk
+        :return:
+        """
         with open(pjoin(CONTENT_ROOT, 'todos.json'), 'w+') as f:
             json.dump(self.todos, f)
 
     def from_json(self, j: dict):
+        """
+        Insert an element from a dictionary object. Tries to compensate for eventual missing id.
+        :param j: A dictionary containing at least a 'text' key
+        """
         if 'id' not in j.keys():
             j['id'] = self._get_next_available_id()
         else:
@@ -115,6 +165,11 @@ class TodoList(object):
 
     @property
     def todos(self):
+        """
+        Returns the internal object list.
+
+        Why not rename self._todos to self.todos? No idea.
+        """
         return self._todos
 
     def _get_next_available_id(self):
@@ -124,16 +179,20 @@ class TodoList(object):
                 return i
 
 
-todo_list = TodoList()
+TODO_LIST = TodoList()
 
 
 def write_todo_to_journal(todo: dict):
+    """
+    Writes the object to a Page, denoted as journal in the URL. The given item should have the
+    following keys: 'id', 'text'
+    """
     p = Page(date.today().strftime('journal/%Y/%m/%d'))
     # load existing
     p.load()
-    if p.md == '':
+    if p.markdown == '':
         # we are freeeee
-        p.md = '''# journal du {d}
+        p.markdown = '''# journal du {d}
 
 ## Done
 
@@ -141,41 +200,42 @@ def write_todo_to_journal(todo: dict):
 '''.format(d=date.today().strftime('%Y/%m/%d'), **todo)
         p.save()
         return
-    match = re.match(r'#+ *Done\n+', p.md)
+    match = re.match(r'#+ *Done\n+', p.markdown)
     if not match:
-        p.md = p.md + '\n\n## Done\n\n'
-    p.md = p.md + '* {id}: {text}\n'.format(**todo)
+        p.markdown = p.markdown + '\n\n## Done\n\n'
+    p.markdown = p.markdown + '* {id}: {text}\n'.format(**todo)
     p.save()
 
 
 class TodoView(MethodView):
+    # pylint: disable=R0201
     methods = ['GET', 'POST', 'PUT', 'DELETE']
 
     def get(self):
-        return jsonify(todo_list.todos)
+        return jsonify(TODO_LIST.todos)
 
     def post(self):
         if not request.is_json:
             return 'Expected json', 400
-        todo_list.from_json(request.json)
+        TODO_LIST.from_json(request.json)
         return "Created", 201
 
     def put(self):
         if not request.is_json:
             return 'Expected json', 400
-        todo_list.from_json(request.json)
+        TODO_LIST.from_json(request.json)
         return "Updated", 201
 
     def delete(self):
         if not request.is_json:
             return 'Expected json', 400
-        for i in range(0, len(todo_list.todos)):
-            if request.json['id'] == todo_list.todos[i]['id']:
+        for i in range(0, len(TODO_LIST.todos)):
+            if request.json['id'] == TODO_LIST.todos[i]['id']:
                 # let's move the item to the day's journal
-                if 'done' in todo_list.todos[i].keys() and todo_list.todos[i]['done']:
-                    write_todo_to_journal(todo_list.todos[i])
-                del todo_list.todos[i]
-                todo_list.save()
+                if 'done' in TODO_LIST.todos[i].keys() and TODO_LIST.todos[i]['done']:
+                    write_todo_to_journal(TODO_LIST.todos[i])
+                del TODO_LIST.todos[i]
+                TODO_LIST.save()
                 return 'OK', 200
         return 'Could not find specified element', 404
 
@@ -188,11 +248,10 @@ app.add_url_rule('/todo', view_func=TodoView.as_view(name='todo'))
 def save(path):
     if not request.is_json:
         return 401
-    md = request.json['markdown']
-    print(md)
-    page = Page(path)
-    page.md = md
-    page.save()
+    markdown = request.json['markdown']
+    page_to_save = Page(path)
+    page_to_save.markdown = markdown
+    page_to_save.save()
     return 'OK', 201
 
 
@@ -221,7 +280,7 @@ def delete(path):
     p = Page(path)
     try:
         os.remove(p.path)
-        recent_files.delete(p.path)
+        RECENT_FILES.delete(p.path)
         if repository is not None:
             logger.info('Deleting page %s from git', p.title)
             repository.index.add([p.path])
@@ -237,7 +296,7 @@ def delete(path):
 @app.route('/<path:path>/edit')
 def edit(path):  # Nooooon rien de rien....
     return render_template('edit.html.j2', page=Page(path),
-                           recent=(Page(f['path']) for f in recent_files.get(9)))
+                           recent=(Page(f['path']) for f in RECENT_FILES.get(9)))
 
 
 @app.route('/', defaults={'path': 'index'})
@@ -249,8 +308,8 @@ def page(path):
         return send_from_directory(pjoin(CONTENT_ROOT, dirname(path)), basename(path))
     if str(path).endswith('/'):
         return redirect(path[:-1])
-    p = Page(path)
-    if p.md == '':
+    page_to_view = Page(path)
+    if page_to_view.markdown == '':
         return redirect(path + '/edit')
-    return render_template('page.html.j2', page=p,
-                           recent=(Page(f['path']) for f in recent_files.get(9)))
+    return render_template('page.html.j2', page=page_to_view,
+                           recent=(Page(f['path']) for f in RECENT_FILES.get(9)))

@@ -1,12 +1,15 @@
+"""
+Some useful classes and functions related to self.wiki
+"""
 import os
-from datetime import datetime
 from os.path import join as pjoin
+from datetime import datetime
 from typing import List, Optional
 
 from self_wiki import CONTENT_ROOT
 
 
-class RecentFileManager(object):
+class RecentFileManager:
     """
     represents a collection of files, with their age attached.
     """
@@ -30,18 +33,18 @@ class RecentFileManager(object):
         :return: a dictionary list with, where each dict has the following keys: path, mtime
         """
         files = []
-        for p, dirnames, filenames in os.walk(directory):
+        for path, dirnames, filenames in os.walk(directory):
             dirnames[:] = [d for d in dirnames if d != '.git']  # remove git dir(s)
             for fname in filenames:
                 if fname == 'todos.json':
                     continue
-                if len(wanted_extensions) > 0 and \
+                if wanted_extensions and \
                         fname.rsplit('.', maxsplit=1)[-1] not in wanted_extensions:
                     continue
-                r = os.stat(pjoin(p, fname))
+                stat_result = os.stat(pjoin(path, fname))
                 files.append({
-                    'path': pjoin(p, fname),
-                    'mtime': r.st_mtime
+                    'path': pjoin(path, fname),
+                    'mtime': stat_result.st_mtime
                 })
         sorted_files = sorted(files, key=lambda x: x['mtime'], reverse=True)
         return sorted_files[:limit]
@@ -54,12 +57,14 @@ class RecentFileManager(object):
 
     @property
     def root(self):
+        "Returns the path we consider as root."
         return self.__root
 
     def re_scan(self, limit: Optional[int] = None, wanted_extensions: List[str] = ('md',)):
         """
         Re-scans the defined content root
-        :param wanted_extensions: a list of file extensions we want to include. Specifying '' will include everything
+        :param wanted_extensions: a list of file extensions we want to include. Specifying ''
+                                  will include everything.
         :param limit: limit the number of results to this
         :return:
         """
@@ -87,7 +92,8 @@ class RecentFileManager(object):
         :return:
         """
         if limit == 0:
-            raise ValueError("it doesn't make any sense to try to get an empty list... call list() yourself")
+            raise ValueError("it doesn't make any sense to try to get an empty list..."
+                             " call list() yourself")
         if not limit:
             limit = self.DEFAULT_LIMIT
         if len(self.__r) < limit:
@@ -95,5 +101,10 @@ class RecentFileManager(object):
         return list(self.__r[:limit])
 
     def delete(self, path: str):
+        """
+        Deletes :param path: from the recent files
+        :param path:
+        :return:
+        """
         self.__r[:] = [d for d in self.__r
                        if d.get('path') != path]

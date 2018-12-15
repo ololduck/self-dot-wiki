@@ -1,11 +1,14 @@
+"""
+self_wiki is an opinionated Wiki engine & task manager.
+"""
+# pylint: disable=C0103
 import logging
 import os
+from os.path import exists, expanduser, join as pjoin
 from flask import Flask
 from git import Repo
-from os.path import exists, expanduser, join as pjoin
 
 __version__ = '0.6.2'
-
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 _h = logging.StreamHandler()
