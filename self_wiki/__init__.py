@@ -8,7 +8,11 @@ __version__ = '0.6.2'
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
-logger.addHandler(logging.StreamHandler())
+_h = logging.StreamHandler()
+_h.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
+logger.addHandler(_h)
+
+logger.info('self.wiki v%s', __version__)
 
 app = Flask(__name__)
 app.logger = logger

@@ -8,6 +8,7 @@ bumpversion = "*"
 tox = "*"
 pytest = "*"
 pytest-sugar = "*"
+pytest-coverage = "*"
 
 [packages]
 flask = "*"

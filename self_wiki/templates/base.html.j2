@@ -15,14 +15,42 @@
     <title>self.wiki {{ page.title or title }}</title>
 </head>
 <body>
-{% block todo %}
-    <h1>Todo(s)</h1>
-    <ul id="todoList">
-    </ul>
-{% endblock %}
-{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="column">
+            {% block todo %}
+                <h1>Todo(s)</h1>
+                <ul id="todoList">
+                </ul>
+            {% endblock %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="column column-75">
+            {% block content %}
 
-{% endblock %}
+            {% endblock %}
+        </div>
+        <div id="sidebar" class="column column-25">
+            {% if recent %}
+                <h3>Recent</h3>
+                <ol id="recentPages">
+                    {% for page in recent %}
+                        <li><a href="{{ page.relpath }}">{{ page.title }}</a></li>
+                    {% endfor %}
+                </ol>
+            {% endif %}
+            {% if page.subpages %}
+                <h3>Child pages</h3>
+                <ul id="childPages">
+                {% for child_page in page.subpages %}
+                    <li class="childPage"><a href="{{ child_page.relpath }}">{{ child_page.title }}</a></li>
+                {% endfor %}
+            {% endif %}
+            </ul>
+        </div>
+    </div>
+</div>
 <script type="text/javascript">window.onload = init;</script>
 </body>
 </html>
