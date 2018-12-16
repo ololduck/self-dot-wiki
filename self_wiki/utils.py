@@ -110,6 +110,7 @@ class RecentFileManager:
         self._file_list[:] = [d for d in self._file_list
                               if d.get('path') != path]
 
+
 class TodoList:
     """
     A container for a collection of Todos
