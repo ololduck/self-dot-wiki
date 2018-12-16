@@ -1,4 +1,6 @@
 language: python
+# Don't use 14.04. srsly.
+dist: xenial
 matrix:
   include:
     - python: 3.5
