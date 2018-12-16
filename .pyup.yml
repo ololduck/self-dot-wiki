@@ -1,0 +1,7 @@
+requirements:
+  - requirements.txt:
+      pin: True
+      update: insecure
+  - requirements-dev.txt:
+      pin: False
+      update: False
