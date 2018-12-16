@@ -14,7 +14,7 @@ pipeline {
                 if test ! -d .virtualenv; then
                     virtualenv --python=python3 .virtualenv
                 fi
-                source .virtualenv/bin/activate
+                . .virtualenv/bin/activate
                 pip install -r requirements-dev.txt
                 '''
             }
@@ -22,7 +22,7 @@ pipeline {
         stage("test") {
             steps {
                 sh '''
-                source .virtualenv/bin/activate
+                . .virtualenv/bin/activate
                 tox
                 '''
             }
@@ -30,7 +30,7 @@ pipeline {
         stage("dist") {
             steps {
                 sh '''
-                source .virtualenv/bin/activate
+                . .virtualenv/bin/activate
                 python setup.py sdist
                 '''
             }
