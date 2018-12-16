@@ -17,6 +17,7 @@ matrix:
       env: TOXENV=flake8
   allow_failures:
     - env: TOXENV=mypy
+    - env: TOXENV=pypy
 
 install:
   - pip install -r requirements-dev.txt
