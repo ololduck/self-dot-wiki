@@ -27,11 +27,10 @@ def test_recent_files_manager_empty(tmp_root):
 
 
 def test_recent_files_manager_2(tmp_root):
-    with open(pjoin(tmp_root.name, 'f1.md'), 'w+') as f:
-        f.write('content 1')
-
-    with open(pjoin(tmp_root.name, 'f2.md'), 'w+') as f:
-        f.write('content 2')
+    with open(pjoin(tmp_root.name, "f1.md"), "w+") as f:
+        f.write("content 1")
+    with open(pjoin(tmp_root.name, "f2.md"), "w+") as f:
+        f.write("content 2")
     rfm = RecentFileManager(tmp_root.name)
     assert len(rfm.get(1)) == 1
     assert len(rfm.get(2)) == 2
@@ -39,22 +38,22 @@ def test_recent_files_manager_2(tmp_root):
 
 
 def test_recent_files_manager_returns(tmp_root):
-    with open(pjoin(tmp_root.name, 'f1.md'), 'w+') as f:
-        f.write('content 1')
+    with open(pjoin(tmp_root.name, "f1.md"), "w+") as f:
+        f.write("content 1")
     rfm = RecentFileManager(tmp_root.name)
     assert type(rfm.get()) is list
     one = rfm.get()[0]
     assert type(one) is dict
-    assert 'mtime' in one.keys() and type(one['mtime']) is float
-    assert 'path' in one.keys() and type(one['path']) is str
+    assert "mtime" in one.keys() and type(one["mtime"]) is float
+    assert "path" in one.keys() and type(one["path"]) is str
 
 
 def test_recent_file_manager_filtering(tmp_root):
-    with open(pjoin(tmp_root.name, 'f1.md'), 'w+') as f:
-        f.write('content 1')
-    with open(pjoin(tmp_root.name, 'other.tgz'), 'w+') as f:
-        f.write('content other.tgz')
+    with open(pjoin(tmp_root.name, "f1.md"), "w+") as f:
+        f.write("content 1")
+    with open(pjoin(tmp_root.name, "other.tgz"), "w+") as f:
+        f.write("content other.tgz")
     rfm = RecentFileManager(tmp_root.name)
     assert len(rfm.get()) == 1
-    rfm = RecentFileManager(tmp_root.name, wanted_extensions=['md', 'tgz'])
+    rfm = RecentFileManager(tmp_root.name, wanted_extensions=["md", "tgz"])
     assert len(rfm.get()) == 2
