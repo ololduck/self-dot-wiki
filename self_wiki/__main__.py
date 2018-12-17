@@ -1,15 +1,16 @@
 """Code that should be executed on direct module call."""
 import logging
 import os
+from os.path import join as pjoin
 from argparse import ArgumentParser
 
-from self_wiki import app, logger
+from self_wiki import app, logger, CONTENT_ROOT
 from self_wiki.views import Page
 
 
 def create_help_page():
     """Create the help page."""
-    page = Page("help")
+    page = Page(pjoin(CONTENT_ROOT, "help"))
     if page.markdown == "":
         page.markdown = """
 # Help

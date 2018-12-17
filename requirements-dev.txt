@@ -1,5 +1,5 @@
 -r requirements.txt
-bumpversion==0.5.3
+bumpversion
 pytest
 pytest-cov
 tox

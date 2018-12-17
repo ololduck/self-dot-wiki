@@ -1,3 +1,5 @@
+schedule: every month
+update: insecure
 requirements:
   - requirements.txt:
       pin: True

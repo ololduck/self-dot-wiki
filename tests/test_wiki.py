@@ -1,8 +1,8 @@
+from tempfile import TemporaryDirectory
+from os.path import join as pjoin, exists
 import pytest
-from os.path import join as pjoin
-from tempfile import TemporaryDirectory, mktemp
 
-from self_wiki.utils import RecentFileManager, TodoList
+from self_wiki.wiki import RecentFileManager, Page
 
 
 @pytest.fixture
@@ -10,7 +10,33 @@ def tmp_root():
     return TemporaryDirectory()
 
 
-def test_recent_files_manager_empty(tmp_root):
+def test_page_non_existent(tmp_root: TemporaryDirectory):
+    page = Page("test1", root=tmp_root.name)
+    assert page.root == tmp_root.name
+    assert page.path == pjoin(tmp_root.name, "test1.md")
+    assert page.relpath == "test1.md"
+    assert not exists(page.path)
+    page.save()
+    assert exists(page.path)
+
+
+def test_existing_page(tmp_root: TemporaryDirectory):
+    pytest.fail("not implemented")
+
+
+def test_page_title(tmp_root: TemporaryDirectory):
+    page = Page("test_title", root=tmp_root.name)
+    assert page.title == "test_title"
+    page.markdown = """ # This is a title
+    
+    And this, content.
+    """
+    assert page.title == "This is a title"
+    page.markdown = "Title: This is an other title\n\n" + page.markdown
+    assert page.title == "This is an other title"
+
+
+def test_recent_files_manager_empty(tmp_root: TemporaryDirectory):
     rfm = RecentFileManager(tmp_root.name)
     assert rfm.root == tmp_root.name
     try:
@@ -57,38 +83,3 @@ def test_recent_file_manager_filtering(tmp_root):
     assert len(rfm.get()) == 1
     rfm = RecentFileManager(tmp_root.name, wanted_extensions=["md", "tgz"])
     assert len(rfm.get()) == 2
-
-
-def test_todo_list_create_without_id():
-    todo_list = TodoList(mktemp())
-    assert len(todo_list.todos) == 0
-    todo_list.from_json({"text": "1"})
-    assert len(todo_list.todos) == 1
-    assert todo_list.todos[0]["id"] == 0
-    assert todo_list.todos[0]["text"] == "1"
-    todo_list.from_json({"text": "2"})
-    assert len(todo_list.todos) == 2
-    assert todo_list.todos[1]["id"] == 1
-    assert todo_list.todos[1]["text"] == "2"
-
-
-def test_todo_list_with_id():
-    todo_list = TodoList(mktemp())
-    assert len(todo_list.todos) == 0
-    todo_list.from_json({"id": 1, "text": "1"})
-    assert len(todo_list.todos) == 1
-    assert todo_list.todos[0]["id"] == 1
-    assert todo_list.todos[0]["text"] == "1"
-    todo_list.from_json({"id": 1, "text": "2"})
-    assert len(todo_list.todos) == 1
-    assert todo_list.todos[0]["id"] == 1
-    assert todo_list.todos[0]["text"] == "2"
-
-
-def test_todo_list_persist():
-    path = mktemp()
-    todo_list = TodoList(path)
-    todo_list.from_json({"id": 1, "text": "1"})
-    assert len(todo_list.todos) == 1
-    todo_list = TodoList(path)
-    assert len(todo_list.todos) == 1
