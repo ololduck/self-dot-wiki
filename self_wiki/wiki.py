@@ -1,10 +1,9 @@
 import logging
 from datetime import datetime
-from os import listdir, makedirs, stat, walk
-from os.path import exists, isdir, dirname, join as pjoin, sep as psep
-from typing import Optional, List
-
 from markdown import Markdown
+from os import listdir, makedirs, stat, walk
+from os.path import dirname, exists, isdir, join as pjoin, sep as psep
+from typing import List, Optional
 
 MD_EXTS = [
     "extra",
@@ -28,9 +27,8 @@ class Page:
     Basically, all manipulation on .md files should go via this
     """
 
-    logger.info("Enabled markdown extensions: %s", ", ".join(MD_EXTS))
-
     converter = Markdown(extensions=MD_EXTS, output_format="html5")
+    logger.info("Enabled markdown extensions: %s", ", ".join(MD_EXTS))
 
     def __init__(self, path, root="", level=0):
         """
@@ -38,13 +36,16 @@ class Page:
 
         :param root: an optional path to use as root. used for Page.relpath.
         :param path: path this page's data on disk
-        :param level: How deep are we in the rabbit hole?
+        :param level: How deep are we in the rabbit hole? mainly used to not recurse
+        a whole directory tree
         """
+        if root != "" and root in path:
+            path = path[len(root):]
         self.root = root
         self._path = path
         self.level = level
         if path[-3:] != ".md":
-            self._path = self.path + ".md"
+            self._path = self._path + ".md"
         self.markdown = ""
         self.meta = None
         self.subpages = []
@@ -60,7 +61,7 @@ class Page:
             return
         with open(self.path, "r") as markdown_file:
             logger.debug(
-                "Found existing page content at %s. " "Loading at level %d",
+                    "Found existing page content at %s. Loading at level %d",
                 self.path,
                 self.level,
             )
@@ -106,17 +107,17 @@ class Page:
                 repository.index.commit(message="Change {}".format(self.title))
 
     @property
-    def path(self):
+    def path(self) -> str:
         """Return the full path to the markdown document."""
         return pjoin(self.root, self._path)
 
     @property
-    def relpath(self):
+    def relpath(self) -> str:
         """Return the page's path, relative to the configured content root."""
         return self._path
 
     @property
-    def title(self):
+    def title(self) -> str:
         """
         Return the title of the page.
 
@@ -133,7 +134,7 @@ class Page:
                 return line[2:]
         return self.relpath[:-3]
 
-    def render(self):
+    def render(self) -> str:
         """Render the markdown to HTML, using the object's converter."""
         html = self.converter.convert(self.markdown)
         self.meta = self.converter.Meta  # pylint: disable=E1101
@@ -191,9 +192,8 @@ class RecentFileManager:
         sorted_files = sorted(files, key=lambda x: x["mtime"], reverse=True)
         return sorted_files[:limit]
 
-    def __init__(
-        self, root: str, wanted_extensions: Optional[List[str]] = None
-    ):
+    def __init__(self, root: str,
+                 wanted_extensions: Optional[List[str]] = None):
         """
         Create a new recent file manager.
 

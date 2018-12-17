@@ -1,8 +1,8 @@
-from tempfile import TemporaryDirectory
-from os.path import join as pjoin, exists
 import pytest
+from os.path import exists, join as pjoin
+from tempfile import TemporaryDirectory
 
-from self_wiki.wiki import RecentFileManager, Page
+from self_wiki.wiki import Page, RecentFileManager
 
 
 @pytest.fixture
@@ -21,13 +21,23 @@ def test_page_non_existent(tmp_root: TemporaryDirectory):
 
 
 def test_existing_page(tmp_root: TemporaryDirectory):
-    pytest.fail("not implemented")
+    with open(pjoin(tmp_root.name, 'existing.md'), 'w+')as f:
+        f.write('''# Sample content
+        
+        Yeah, just a couple lines.
+        ''')
+    assert exists(pjoin(tmp_root.name, 'existing.md'))
+    page = Page("existing.md", root=tmp_root.name)
+    assert page.root == tmp_root.name
+    assert page.path == pjoin(tmp_root.name, "existing.md")
+    assert page.markdown != ''
+    assert '# Sample content' in page.markdown
 
 
 def test_page_title(tmp_root: TemporaryDirectory):
     page = Page("test_title", root=tmp_root.name)
     assert page.title == "test_title"
-    page.markdown = """ # This is a title
+    page.markdown = """# This is a title
     
     And this, content.
     """
