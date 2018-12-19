@@ -7,7 +7,7 @@ import logging
 from datetime import datetime
 from os import listdir, makedirs, stat, walk
 from os.path import dirname, exists, isdir, join as pjoin, sep as psep
-from typing import List, Optional
+from typing import List, Optional, Dict, Union
 
 from markdown import Markdown
 
@@ -158,20 +158,17 @@ class RecentFileManager:
         directory: str,
         limit=DEFAULT_LIMIT,
         wanted_extensions: Optional[List[str]] = None,
-    ) -> List[dict]:
+    ) -> List[Dict[str, Union[str, int]]]:
         """
         Return the list of recent files.
 
         This list is sorted by modification time as a UNIX timestamp
-        (recent first), with an optional :param limit:.
+        (recent first), with an optional *limit*.
 
         :param directory: Base directory for the search
-        :type directory: str
         :param limit: number of results to return
-        :type limit: int
         :param wanted_extensions: A list of file extensions we want.
         If None, ['md'] is used.
-        :type wanted_extensions: list
         :return: a dictionary list with, where each dict has the
         following keys: path, mtime
         """
@@ -216,7 +213,7 @@ class RecentFileManager:
         )
 
     @property
-    def root(self):
+    def root(self) -> str:
         """Return the path we consider as root."""
         return self._root
 
@@ -254,12 +251,11 @@ class RecentFileManager:
         self.delete(path)
         self._file_list.insert(0, {"path": path, "mtime": now.timestamp()})
 
-    def get(self, limit: Optional[int] = None):
+    def get(
+        self, limit: Optional[int] = None
+    ) -> List[Dict[str, Union[str, int]]]:
         """
-        Return up to :param limit: recent items.
-
-        :param limit:
-        :return:
+        Return up to *limit* recent items.
         """
         if limit == 0:
             raise ValueError(
@@ -276,8 +272,8 @@ class RecentFileManager:
         """
         Delete :param path: from the recent files.
 
-        :param path:
-        :return:
+        :param path: The exact path we should forget.
+
         """
         self._file_list[:] = [
             d for d in self._file_list if d.get("path") != path
