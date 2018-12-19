@@ -1,7 +1,7 @@
 # self.wiki
 
-![documentation](https://readthedocs.org/projects/selfwiki/badge/?version=latest)
-![tests](https://api.travis-ci.org/paulollivier/self-dot-wiki.svg?branch=master)
+[![documentation](https://readthedocs.org/projects/selfwiki/badge/?version=latest)][docs]
+[![tests](https://api.travis-ci.org/paulollivier/self-dot-wiki.svg?branch=master)][tests]
 
 [self.wiki] is a wiki and todo manager.
 I wanted to be able to write notes, documentation, and tasks from a simple (understand: minimal) interface, using
@@ -81,6 +81,8 @@ This project uses many open-source libraries:
 Special thanks to those.
 
 [self.wiki]: https://vit.am/gitea/paulollivier/self-dot-wiki
+[docs]: https://selfwiki.readthedocs.io/en/latest/?badge=latest
+[tests]: https://travis-ci.org/paulollivier/self-dot-wiki#
 [releases]: https://vit.am/gitea/paulollivier/self-dot-wiki/realeases
 [uzbl]: https://www.uzbl.org/
 [tiddlywiki]: https://tiddlywiki.com/
