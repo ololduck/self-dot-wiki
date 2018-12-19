@@ -1,10 +1,10 @@
 """Code that should be executed on direct module call."""
 import logging
 import os
-from os.path import join as pjoin
 from argparse import ArgumentParser
+from os.path import join as pjoin
 
-from self_wiki import app, logger, CONTENT_ROOT
+from self_wiki import CONTENT_ROOT, app, logger
 from self_wiki.views import Page
 
 

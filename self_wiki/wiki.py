@@ -1,3 +1,8 @@
+"""
+Contains wiki-related stuff.
+
+For instance, :py:class:Page may be used to manipulate .md files on disk.
+"""
 import logging
 from datetime import datetime
 from markdown import Markdown
@@ -36,8 +41,8 @@ class Page:
 
         :param root: an optional path to use as root. used for Page.relpath.
         :param path: path this page's data on disk
-        :param level: How deep are we in the rabbit hole? mainly used to not recurse
-        a whole directory tree
+        :param level: How deep are we in the rabbit hole? mainly used to not
+                      recurse a whole directory tree
         """
         if root != "" and root in path:
             path = path[len(root):]

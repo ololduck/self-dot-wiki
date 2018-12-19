@@ -1,3 +1,4 @@
+"""Models related to todos stuff."""
 import json
 from os.path import exists
 
