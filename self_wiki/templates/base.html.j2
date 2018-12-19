@@ -36,7 +36,7 @@
                 <h3>Recent</h3>
                 <ol id="recentPages">
                     {% for page in recent %}
-                        <li><a href="{{ page.relpath }}">{{ page.title }}</a></li>
+                        <li><a href="{{ page.relpath[:-3] }}">{{ page.title }}</a></li>
                     {% endfor %}
                 </ol>
             {% endif %}
@@ -44,7 +44,7 @@
                 <h3>Child pages</h3>
                 <ul id="childPages">
                 {% for child_page in page.subpages %}
-                    <li class="childPage"><a href="{{ child_page.relpath }}">{{ child_page.title }}</a></li>
+                    <li class="childPage"><a href="{{ child_page.relpath[:-3] }}">{{ child_page.title }}</a></li>
                 {% endfor %}
             {% endif %}
             </ul>

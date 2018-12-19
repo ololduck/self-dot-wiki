@@ -192,8 +192,9 @@ class RecentFileManager:
         sorted_files = sorted(files, key=lambda x: x["mtime"], reverse=True)
         return sorted_files[:limit]
 
-    def __init__(self, root: str,
-                 wanted_extensions: Optional[List[str]] = None):
+    def __init__(
+            self, root: str, wanted_extensions: Optional[List[str]] = None
+    ):
         """
         Create a new recent file manager.
 

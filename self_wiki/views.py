@@ -1,10 +1,6 @@
 """Contains the flask views and their related objects."""
 import logging
 import os
-import re
-from datetime import date
-from os.path import basename, dirname, exists, isdir, join as pjoin
-
 from flask import (
     jsonify,
     redirect,
@@ -13,11 +9,12 @@ from flask import (
     send_from_directory,
 )
 from flask.views import MethodView
+from os.path import basename, dirname, exists, isdir, join as pjoin
 
 from self_wiki import CONTENT_ROOT, app, repository
 from self_wiki.todo import TodoList
 from self_wiki.utils import write_todo_to_journal
-from self_wiki.wiki import RecentFileManager, Page
+from self_wiki.wiki import Page, RecentFileManager
 
 logger = logging.getLogger(__name__)
 
@@ -139,13 +136,13 @@ def page(path):  # noqa: D103
         )
     if str(path).endswith("/"):
         return redirect(path[:-1])
-    page_to_view = Page(pjoin(CONTENT_ROOT, path))
+    page_to_view = Page(path, root=CONTENT_ROOT)
     if page_to_view.markdown == "":
         return redirect(path + "/edit")
     return render_template(
         "page.html.j2",
         page=page_to_view,
         recent=(
-            Page(pjoin(CONTENT_ROOT, f["path"])) for f in RECENT_FILES.get(9)
+            Page(f["path"], root=CONTENT_ROOT) for f in RECENT_FILES.get(9)
         ),
     )

@@ -2,10 +2,9 @@
 # flake8: noqa
 import logging
 import os
-from os.path import exists, expanduser, join as pjoin
-
 from flask import Flask
 from git import Repo
+from os.path import exists, expanduser, join as pjoin
 
 from self_wiki.wiki import repository
 
@@ -33,3 +32,4 @@ if not exists(CONTENT_ROOT):
 if exists(pjoin(CONTENT_ROOT, ".git")):
     repository = Repo(CONTENT_ROOT)
     logger.info("Git integration is enabled. self.wiki will commit changes")
+from self_wiki import views

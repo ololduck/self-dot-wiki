@@ -21,17 +21,19 @@ def test_page_non_existent(tmp_root: TemporaryDirectory):
 
 
 def test_existing_page(tmp_root: TemporaryDirectory):
-    with open(pjoin(tmp_root.name, 'existing.md'), 'w+')as f:
-        f.write('''# Sample content
-        
-        Yeah, just a couple lines.
-        ''')
-    assert exists(pjoin(tmp_root.name, 'existing.md'))
+    with open(pjoin(tmp_root.name, "existing.md"), "w+") as f:
+        f.write(
+                """# Sample content
+            
+            Yeah, just a couple lines.
+            """
+        )
+    assert exists(pjoin(tmp_root.name, "existing.md"))
     page = Page("existing.md", root=tmp_root.name)
     assert page.root == tmp_root.name
     assert page.path == pjoin(tmp_root.name, "existing.md")
-    assert page.markdown != ''
-    assert '# Sample content' in page.markdown
+    assert page.markdown != ""
+    assert "# Sample content" in page.markdown
 
 
 def test_page_title(tmp_root: TemporaryDirectory):
