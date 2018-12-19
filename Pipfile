@@ -9,6 +9,11 @@ tox = "*"
 pytest = "*"
 pytest-sugar = "*"
 pytest-coverage = "*"
+sphinx-autodoc-typehints = "*"
+sphinx-readable-theme = "*"
+sphinx = "*"
+sphinx-autodoc-annotation = "*"
+m2r = "*"
 
 [packages]
 flask = "*"

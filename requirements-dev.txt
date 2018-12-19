@@ -1,5 +1,10 @@
 -r requirements.txt
-bumpversion==0.5.3
+bumpversion
 pytest
 pytest-cov
 tox
+sphinx-autodoc-typehints
+sphinx-readable-theme
+sphinx
+sphinx-autodoc-annotation
+m2r

@@ -17,7 +17,7 @@ Here's what my feature list draft looked like:
     - [x] add
     - [ ] delete
     - [ ] update status
-- [x] I should be able to navigate links without using weird browsers like [`uzbl`]
+- [x] I should be able to navigate links without using weird browsers like [uzbl]
 
 That's more or less it.
 
@@ -79,7 +79,7 @@ Special thanks to those.
 
 [self.wiki]: https://vit.am/gitea/paulollivier/self-dot-wiki
 [releases]: https://vit.am/gitea/paulollivier/self-dot-wiki/realeases
-[`uzbl`]: https://www.uzbl.org/
+[uzbl]: https://www.uzbl.org/
 [tiddlywiki]: https://tiddlywiki.com/
 [flask]: https://flask.pocoo.org/
 [pymarkdown]: https://python-markdown.github.io/
