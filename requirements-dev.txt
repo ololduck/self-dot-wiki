@@ -3,3 +3,8 @@ bumpversion
 pytest
 pytest-cov
 tox
+sphinx-autodoc-typehints
+sphinx-readable-theme
+sphinx
+sphinx-autodoc-annotation
+m2r
