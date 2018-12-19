@@ -7,7 +7,7 @@ import logging
 from datetime import datetime
 from os import listdir, makedirs, stat, walk
 from os.path import dirname, exists, isdir, join as pjoin, sep as psep
-from typing import List, Optional, Dict, Union
+from typing import Dict, List, Optional, Union
 
 from markdown import Markdown
 
@@ -254,9 +254,7 @@ class RecentFileManager:
     def get(
         self, limit: Optional[int] = None
     ) -> List[Dict[str, Union[str, int]]]:
-        """
-        Return up to *limit* recent items.
-        """
+        """Return up to *limit* recent items."""
         if limit == 0:
             raise ValueError(
                 "it doesn't make any sense to try to get an empty list..."
