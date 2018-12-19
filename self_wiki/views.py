@@ -1,6 +1,8 @@
 """Contains the flask views and their related objects."""
 import logging
 import os
+from os.path import basename, dirname, exists, isdir, join as pjoin
+
 from flask import (
     jsonify,
     redirect,
@@ -9,7 +11,6 @@ from flask import (
     send_from_directory,
 )
 from flask.views import MethodView
-from os.path import basename, dirname, exists, isdir, join as pjoin
 
 from self_wiki import CONTENT_ROOT, app, repository
 from self_wiki.todo import TodoList

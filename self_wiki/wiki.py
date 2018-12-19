@@ -5,10 +5,11 @@ For instance, :py:class:Page may be used to manipulate .md files on disk.
 """
 import logging
 from datetime import datetime
-from markdown import Markdown
 from os import listdir, makedirs, stat, walk
 from os.path import dirname, exists, isdir, join as pjoin, sep as psep
 from typing import List, Optional
+
+from markdown import Markdown
 
 MD_EXTS = [
     "extra",
@@ -66,7 +67,7 @@ class Page:
             return
         with open(self.path, "r") as markdown_file:
             logger.debug(
-                    "Found existing page content at %s. Loading at level %d",
+                "Found existing page content at %s. Loading at level %d",
                 self.path,
                 self.level,
             )
