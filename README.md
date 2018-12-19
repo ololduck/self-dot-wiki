@@ -1,5 +1,8 @@
 # self.wiki
 
+![documentation](https://readthedocs.org/projects/selfwiki/badge/?version=latest)
+![tests](https://api.travis-ci.org/paulollivier/self-dot-wiki.svg?branch=master)
+
 [self.wiki] is a wiki and todo manager.
 I wanted to be able to write notes, documentation, and tasks from a simple (understand: minimal) interface, using
 mostly keyboard shortcuts.
