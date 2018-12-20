@@ -3,7 +3,7 @@
     <link rel="stylesheet/less" type="text/css" href="{{ url_for('static', filename='lib/milligram.min.css') }}"/>
     <link rel="stylesheet/less" type="text/css" href="{{ url_for('static', filename='style.less') }}"/>
     <link rel="stylesheet/less" type="text/css" href="{{ url_for('static', filename='lib/monokai.css') }}"/>
-    <link rel="shortcut icon" href="{{ favicon }}">
+    <link rel="shortcut icon" href="{{ favicon|default(url_for('static', filename='favicon.ico'), true) }}">
     <script src="{{ url_for('static', filename='lib/less.3.8.1.js') }}"></script>
     <script src="{{ url_for('static', filename='lib/mousetrap.min.js') }}"></script>
     <script src="{{ url_for('static', filename='lib/moment.min.js') }}"></script>

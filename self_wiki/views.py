@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 RECENT_FILES = RecentFileManager(CONTENT_ROOT)
 TODO_LIST = TodoList(pjoin(CONTENT_ROOT, "todos.json"))
 
-FAVICON_PATH = os.environ.get('SELF_WIKI_FAVICON_PATH', '') or url_for('static', filename='favicon.ico')
+FAVICON_PATH = os.environ.get('SELF_WIKI_FAVICON_PATH', '')
 TITLE_PREFIX = os.environ.get('SELF_WIKI_TITLE_PREFIX', '') or 'self.wiki '
 if TITLE_PREFIX[-1] != ' ':
     TITLE_PREFIX = TITLE_PREFIX + ' '
