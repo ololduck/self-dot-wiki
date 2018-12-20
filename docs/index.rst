@@ -4,6 +4,7 @@
 
 .. mdinclude:: ../README.md
 
+.. mdinclude:: ../CONTRIBUTING.md
 
 API Documentation
 =================
