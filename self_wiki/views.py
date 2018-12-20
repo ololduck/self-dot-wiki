@@ -8,8 +8,7 @@ from flask import (
     redirect,
     render_template,
     request,
-    send_from_directory,
-    url_for
+    send_from_directory
 )
 from flask.views import MethodView
 
