@@ -23,7 +23,7 @@ def test_page_non_existent(tmp_root: TemporaryDirectory):
 def test_existing_page(tmp_root: TemporaryDirectory):
     with open(pjoin(tmp_root.name, "existing.md"), "w+") as f:
         f.write(
-                """# Sample content
+            """# Sample content
             
             Yeah, just a couple lines.
             """

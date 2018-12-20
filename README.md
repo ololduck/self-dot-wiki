@@ -1,7 +1,7 @@
 # self.wiki
 
-[![documentation](https://readthedocs.org/projects/selfwiki/badge/?version=latest)][docs]
-[![tests](https://api.travis-ci.org/paulollivier/self-dot-wiki.svg?branch=master)][tests]
+[![documentation](https://img.shields.io/readthedocs/selfwiki.svg)](https://selfwiki.readthedocs.io/en/latest/)
+[![tests](https://img.shields.io/travis/paulollivier/self-dot-wiki.svg)](https://travis-ci.org/paulollivier/self-dot-wiki)
 
 [self.wiki] is a wiki and todo manager.
 I wanted to be able to write notes, documentation, and tasks from a simple (understand: minimal) interface, using
@@ -63,11 +63,49 @@ http://localhost:4000/help.
 
 If a page is not available, you will be redirected to its edit page, which is simply `/path/to/page/edit`.
 
+### Keyboard shortcuts
+
+We make heavy use of `accesskey`s to navigate the page. In fact, [self.wiki] autogenerates those on every link present
+on any page.
+
+On firefox, you can activate these keys by pressing `alt`+`shift`+`key`.
+
+There are also some keyboard shortcuts available on a more general manner.
+
+Keys          | Context | Effect
+--------------|---------|-------
+`ctrl+c n`    | any     | create a new todo item
+`ctrl+c d`    | view    | delete current page
+`alt+shift+f` | edit    | send a file, sibling to the current edited file
+`alt+shift+s` | edit    | save current edited file
+
+### Todos
+
+To create a todo item, use the keyboard shortcut (please see above). You will be prompted for a text that will be shown.
+
+To mark a todo item as done (but not remove it completely), click on its text. The text will be striked, representing completion.
+
+To delete a todo item, click on its *del* button.
+
+NOTE: if a todo item is deleted, when also marked as done, we will write this item to a special page, `/journal/year/month/day.md`.
+
 ### Git integration
 
 If a `.git` repository is present at the root of the `SELF_WIKI_CONTENT_ROOT`, `self.wiki` will try to commit changes.
 
 Please note that they won't be pushed or pulled to a remote repository! I might add it in the future
+
+
+## Advanced usage
+
+Instead of running the included `self.wiki` script, you may use any WSGI-compatible server. This will increase the
+performance of loading the pages.
+
+For instance, using [gunicorn]:
+
+    gunicorn -b localhost:4000 self_wiki:app
+
+I have yet to run benchmarks to measure the real-world improvements.
 
 ## Special thanks
 
@@ -77,16 +115,17 @@ This project uses many open-source libraries:
 * [pymarkdown]
 * [milligram]
 * [mousetrap.js]
+* [sphinx]
 
 Special thanks to those.
 
-[self.wiki]: https://vit.am/gitea/paulollivier/self-dot-wiki
-[docs]: https://selfwiki.readthedocs.io/en/latest/?badge=latest
-[tests]: https://travis-ci.org/paulollivier/self-dot-wiki#
-[releases]: https://vit.am/gitea/paulollivier/self-dot-wiki/realeases
-[uzbl]: https://www.uzbl.org/
-[tiddlywiki]: https://tiddlywiki.com/
 [flask]: https://flask.pocoo.org/
-[pymarkdown]: https://python-markdown.github.io/
+[gunicorn]: https://gunicorn.org/
 [milligram]: https://milligram.io/
 [mousetrap.js]: https://craig.is/killing/mice
+[pymarkdown]: https://python-markdown.github.io/
+[releases]: https://github.com/paulollivier/self-dot-wiki/releases
+[self.wiki]: https://github.com/paulollivier/self-dot-wiki
+[sphinx]: https://todo.me/
+[tiddlywiki]: https://tiddlywiki.com/
+[uzbl]: https://www.uzbl.org/

@@ -196,7 +196,7 @@ class RecentFileManager:
         return sorted_files[:limit]
 
     def __init__(
-            self, root: str, wanted_extensions: Optional[List[str]] = None
+        self, root: str, wanted_extensions: Optional[List[str]] = None
     ):
         """
         Create a new recent file manager.

@@ -94,7 +94,7 @@ class TestWikiApi:
     def test_no_content(self, client: FlaskClient):
         rv = client.get("/test", follow_redirects=False)
         assert not exists(
-                pjoin(os.environ["SELF_WIKI_CONTENT_ROOT"], "test.md")
+            pjoin(os.environ["SELF_WIKI_CONTENT_ROOT"], "test.md")
         )
         assert rv.status_code == 302
         assert rv.headers["Location"] == "http://localhost/test/edit"
