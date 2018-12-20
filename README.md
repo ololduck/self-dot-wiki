@@ -53,8 +53,13 @@ Then, simply run the included script:
 
 ## Configuration
 
-Configuration is kept to a minimum. There is a single configurable environment variable: `SELF_WIKI_CONTENT_ROOT`,
-defaulted to `~/.self.wiki`. [self.wiki] will store its markdown files there.
+Configuration is kept to a minimum, and uses environment variables to achieve its goals.
+
+Environment variable name | default               | note
+--------------------------|-----------------------|-----
+`SELF_WIKI_CONTENT_ROOT`  | `~/.self.wiki`        | [self.wiki] will store its markdown files there.
+`SELF_WIKI_FAVICON_PATH`  | `/static/favicon.ico` | Path to the favicon to use. Must be relative to the `CONTENT_ROOT`.
+`SELF_WIKI_TITLE_PREFIX`  | "self.wiki "          | Page `<title>` prefix.
 
 ## Usage
 

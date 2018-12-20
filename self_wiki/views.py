@@ -9,6 +9,7 @@ from flask import (
     render_template,
     request,
     send_from_directory,
+    url_for
 )
 from flask.views import MethodView
 
@@ -21,6 +22,11 @@ logger = logging.getLogger(__name__)
 
 RECENT_FILES = RecentFileManager(CONTENT_ROOT)
 TODO_LIST = TodoList(pjoin(CONTENT_ROOT, "todos.json"))
+
+FAVICON_PATH = os.environ.get('SELF_WIKI_FAVICON_PATH', '') or url_for('static', filename='favicon.ico')
+TITLE_PREFIX = os.environ.get('SELF_WIKI_TITLE_PREFIX', '') or 'self.wiki '
+if TITLE_PREFIX[-1] != ' ':
+    TITLE_PREFIX = TITLE_PREFIX + ' '
 
 
 class TodoView(MethodView):
@@ -119,6 +125,8 @@ def edit(path):  # noqa: D103
     # Nooooon rien de rien....
     return render_template(
         "edit.html.j2",
+        favicon=FAVICON_PATH,
+        title_prefix=TITLE_PREFIX,
         page=Page(path, CONTENT_ROOT),
         recent=(Page(f["path"], CONTENT_ROOT) for f in RECENT_FILES.get(9)),
     )
@@ -142,6 +150,8 @@ def page(path):  # noqa: D103
         return redirect(path + "/edit")
     return render_template(
         "page.html.j2",
+        favicon=FAVICON_PATH,
+        title_prefix=TITLE_PREFIX,
         page=page_to_view,
         recent=(
             Page(f["path"], root=CONTENT_ROOT) for f in RECENT_FILES.get(9)
