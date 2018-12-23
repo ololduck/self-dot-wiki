@@ -6,7 +6,7 @@
 
 {% block content %}
     <h1>Editing {{ page.title }}</h1>
-    <input id="file-input" type="file" name="file" style="display: none;" multiple accesskey="f" oninput="sendFile()"/>
+    <input id="file-input" type="file" name="file" style="display: none;" multiple accesskey="o" oninput="sendFile()"/>
     <input id="saveButton" type="button" name="save" style="display: none" accesskey="s"
            onclick="saveCurrentPage(editor)"/>
     <textarea id="edit" class="mousetrap">
