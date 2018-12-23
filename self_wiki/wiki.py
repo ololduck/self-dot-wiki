@@ -36,7 +36,7 @@ class Page:
     converter = Markdown(extensions=MD_EXTS, output_format="html5")
     logger.info("Enabled markdown extensions: %s", ", ".join(MD_EXTS))
 
-    def __init__(self, path, root="", level=0):
+    def __init__(self, path, root="", level=0, shallow=False):
         """
         Create a new Page representation.
 
@@ -46,7 +46,7 @@ class Page:
                       recurse a whole directory tree
         """
         if root != "" and root in path:
-            path = path[len(root):]
+            path = path[len(root) :]
         self.root = root
         self._path = path
         self.level = level
@@ -55,9 +55,9 @@ class Page:
         self.markdown = ""
         self.meta = None
         self.subpages = []
-        self.load()
+        self.load(not shallow)
 
-    def load(self):
+    def load(self, load_children=False):
         """
         Load the markdown data from disk.
 
@@ -74,7 +74,7 @@ class Page:
             self.markdown = markdown_file.read()
 
         # We need a way to make sure we don't read an entire directory tree
-        if self.level > 0:
+        if self.level > 0 or not load_children:
             return
         subpages_dir = self.path[:-3]  # remove the .md
         if exists(subpages_dir) and isdir(subpages_dir):
@@ -156,7 +156,7 @@ class RecentFileManager:
     def get_recent_files(
         cls,
         directory: str,
-        limit=DEFAULT_LIMIT,
+        limit: Optional[int] = DEFAULT_LIMIT,
         wanted_extensions: Optional[List[str]] = None,
     ) -> List[Dict[str, Union[str, int]]]:
         """
@@ -166,11 +166,12 @@ class RecentFileManager:
         (recent first), with an optional *limit*.
 
         :param directory: Base directory for the search
-        :param limit: number of results to return
+        :param limit: number of results to return. May be None to
+                      return all results.
         :param wanted_extensions: A list of file extensions we want.
-        If None, ['md'] is used.
+                                  If None, ['md'] is used.
         :return: a dictionary list with, where each dict has the
-        following keys: path, mtime
+                 following keys: path, mtime
         """
         files = []
         if not wanted_extensions:
@@ -193,10 +194,15 @@ class RecentFileManager:
                     {"path": pjoin(path, fname), "mtime": stat_result.st_mtime}
                 )
         sorted_files = sorted(files, key=lambda x: x["mtime"], reverse=True)
+        if limit is None:
+            return sorted_files
         return sorted_files[:limit]
 
     def __init__(
-        self, root: str, wanted_extensions: Optional[List[str]] = None
+        self,
+        root: str,
+        wanted_extensions: Optional[List[str]] = None,
+        limit: Optional[int] = DEFAULT_LIMIT,
     ):
         """
         Create a new recent file manager.
@@ -204,12 +210,11 @@ class RecentFileManager:
         :param root: The root path we want to find recent files in
         :param wanted_extensions: a whitelist of file extensions we want,
         without the '.'. Defaults to ['md']. See get_recent_files.
+        :param limit: a limit. May be None to read everything.
         """
         self._root = root
         self._file_list = RecentFileManager.get_recent_files(
-            directory=root,
-            limit=self.DEFAULT_LIMIT,
-            wanted_extensions=wanted_extensions,
+            directory=root, limit=limit, wanted_extensions=wanted_extensions
         )
 
     @property
@@ -260,9 +265,7 @@ class RecentFileManager:
                 "it doesn't make any sense to try to get an empty list..."
                 " call list() yourself"
             )
-        if not limit:
-            limit = self.DEFAULT_LIMIT
-        if len(self._file_list) < limit:
+        if limit is None or len(self._file_list) < limit:
             limit = len(self._file_list)
         return list(self._file_list[:limit])
 

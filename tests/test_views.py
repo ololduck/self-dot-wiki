@@ -1,7 +1,10 @@
+import time
+
 import os
 import pytest
 from flask.testing import FlaskClient
 from os.path import exists, join as pjoin
+from self_wiki.wiki import Page
 from tempfile import TemporaryDirectory
 
 import self_wiki
@@ -88,6 +91,32 @@ class TestTodoApi:
         assert rv.status_code == 200
         assert hasattr(rv, "json")
         self.cleanup(client)
+
+
+def test_search(client):
+    tmpdir = os.environ["SELF_WIKI_CONTENT_ROOT"]
+    p = Page("test_root", root=tmpdir)
+    p.markdown = """# Let's build a station in space
+    
+    To fuck under zero-gravity"""
+    p.save()
+    time.sleep(1)
+    p2 = Page("subdir/test_sub", root=tmpdir)
+    p.markdown = """ # Me over you
+    
+    You over me...
+    """
+    p2.save()
+
+    rv = client.get("/search")
+    assert rv.status_code == 200
+    assert rv.json and type(rv.json) == list and len(rv.json) == 2
+    first = rv.json[0]
+    assert "relpath" in first
+    assert "title" in first
+    assert "mtime" in first
+    assert first["relpath"] == "subdir/test_sub.md"
+    assert first["title"] == "Me over you"
 
 
 class TestWikiApi:

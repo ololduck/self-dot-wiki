@@ -32,6 +32,10 @@
             {% endblock %}
         </div>
         <div id="sidebar" class="column column-25">
+            <input id="searchbox" type="text" placeholder="Search..." accesskey="f" list="pageList"
+                   oninput="setPageList(document.getElementById('pageList'))" onchange="window.location.assign(window
+                   .location.origin + '/' + this.value)"/>
+            <datalist id="pageList"></datalist>
             {% if recent %}
                 <h3>Recent</h3>
                 <ol id="recentPages">
