@@ -76,13 +76,14 @@ def search():
     This endpoint returns the list of all pages. It is NOT a full-text search.
 
     >>> client = app.test_client()
-    >>> r = client.get('/search_endpoint&up_to=20')
+    >>> r = client.get('/search?up_to=20')
     >>> r.status_code
     200
     >>> "results" in r.json and len(r.json["results"]) <= 20
     True
     """
     limit = request.args.get("up_to", default=None, type=int)
+    logger.debug("search request with args %s", request.args)
     res = RECENT_FILES.get(limit)
     results = []
     for e in res:

@@ -1,18 +1,16 @@
-import time
-
 import os
 import pytest
-from flask.testing import FlaskClient
 from os.path import exists, join as pjoin
-from self_wiki.wiki import Page
 from tempfile import TemporaryDirectory
 
-import self_wiki
+from flask.testing import FlaskClient
 
 
 @pytest.fixture
 def client():
     os.environ["SELF_WIKI_CONTENT_ROOT"] = TemporaryDirectory().name
+    import self_wiki
+    print(os.environ)
     self_wiki.app.config["TESTING"] = True
     client = self_wiki.app.test_client()
     yield client
@@ -93,30 +91,39 @@ class TestTodoApi:
         self.cleanup(client)
 
 
-def test_search(client):
-    tmpdir = os.environ["SELF_WIKI_CONTENT_ROOT"]
-    p = Page("test_root", root=tmpdir)
-    p.markdown = """# Let's build a station in space
-    
-    To fuck under zero-gravity"""
-    p.save()
-    time.sleep(1)
-    p2 = Page("subdir/test_sub", root=tmpdir)
-    p.markdown = """ # Me over you
-    
-    You over me...
-    """
-    p2.save()
+class TestSearchApi:
 
-    rv = client.get("/search")
-    assert rv.status_code == 200
-    assert rv.json and type(rv.json) == list and len(rv.json) == 2
-    first = rv.json[0]
-    assert "relpath" in first
-    assert "title" in first
-    assert "mtime" in first
-    assert first["relpath"] == "subdir/test_sub.md"
-    assert first["title"] == "Me over you"
+    def create_pages(self, client):
+        rv = client.put('/test_root/edit/save', json={'markdown': """# Let's build a station in space
+        
+        To fuck under zero-gravity"""})
+        assert rv.status_code == 201
+        rv = client.put('/subdir/test_sub/edit/save', json={'markdown': """ # Me over you
+        
+        You over me..."""})
+        assert rv.status_code == 201
+
+    def test_search(self, client):
+        self.create_pages(client)
+        rv = client.get("/search")
+        assert rv.status_code == 200
+        assert rv.json and type(rv.json) == list and len(rv.json) == 2
+        first = rv.json[0]
+        assert "path" in first
+        assert "mtime" in first
+        assert first["path"] == "/subdir/test_sub.md"
+
+    def test_search_with_limit(self, client):
+        self.create_pages(client)
+        rv = client.get("/search?up_to=1")
+        assert rv.status_code == 200
+        assert rv.json and type(rv.json) == list and len(rv.json) == 1
+
+    def test_search_with_large_limit(self, client):
+        self.create_pages(client)
+        rv = client.get("/search?up_to=9999")
+        assert rv.status_code == 200
+        assert rv.json and type(rv.json) == list and len(rv.json) == 2
 
 
 class TestWikiApi:
