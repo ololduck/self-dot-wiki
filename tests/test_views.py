@@ -1,15 +1,16 @@
 import os
 import pytest
-from flask.testing import FlaskClient
 from os.path import exists, join as pjoin
 from tempfile import TemporaryDirectory
 
-import self_wiki
+from flask.testing import FlaskClient
 
 
 @pytest.fixture
 def client():
     os.environ["SELF_WIKI_CONTENT_ROOT"] = TemporaryDirectory().name
+    import self_wiki
+    print(os.environ)
     self_wiki.app.config["TESTING"] = True
     client = self_wiki.app.test_client()
     yield client
@@ -88,6 +89,41 @@ class TestTodoApi:
         assert rv.status_code == 200
         assert hasattr(rv, "json")
         self.cleanup(client)
+
+
+class TestSearchApi:
+
+    def create_pages(self, client):
+        rv = client.put('/test_root/edit/save', json={'markdown': """# Let's build a station in space
+        
+        To fuck under zero-gravity"""})
+        assert rv.status_code == 201
+        rv = client.put('/subdir/test_sub/edit/save', json={'markdown': """ # Me over you
+        
+        You over me..."""})
+        assert rv.status_code == 201
+
+    def test_search(self, client):
+        self.create_pages(client)
+        rv = client.get("/search")
+        assert rv.status_code == 200
+        assert rv.json and type(rv.json) == list and len(rv.json) == 2
+        first = rv.json[0]
+        assert "path" in first
+        assert "mtime" in first
+        assert first["path"] == "/subdir/test_sub.md"
+
+    def test_search_with_limit(self, client):
+        self.create_pages(client)
+        rv = client.get("/search?up_to=1")
+        assert rv.status_code == 200
+        assert rv.json and type(rv.json) == list and len(rv.json) == 1
+
+    def test_search_with_large_limit(self, client):
+        self.create_pages(client)
+        rv = client.get("/search?up_to=9999")
+        assert rv.status_code == 200
+        assert rv.json and type(rv.json) == list and len(rv.json) == 2
 
 
 class TestWikiApi:

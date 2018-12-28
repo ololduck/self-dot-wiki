@@ -35,6 +35,9 @@ Mousetrap.bind('ctrl+c n', function (e) {
 Mousetrap.bind('ctrl+c d', function (e) {
     if (confirm('Really delete this page?')) {
         let xhr = new XMLHttpRequest();
+        xhr.onload = function() {
+            window.location.pathname = '/'
+        };
         xhr.open('delete', window.location.toString());
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.send();
@@ -88,6 +91,21 @@ function saveCurrentPage(editor) {
     xhr.open('put', window.location.toString() + '/save');
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.send(JSON.stringify({'markdown': editor.value()}));
+}
+
+function setPageList(datalist) {
+    let xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+        datalist.innerHTML = '';
+        JSON.parse(xhr.responseText).forEach(function (data) {
+            let option = document.createElement('option');
+            option.value = data.path.slice(0, -3);
+            datalist.appendChild(option);
+        });
+    };
+    xhr.open('get', '/search');
+    xhr.send();
+
 }
 
 function init() {

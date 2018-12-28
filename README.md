@@ -80,8 +80,9 @@ There are also some keyboard shortcuts available on a more general manner.
 Keys          | Context | Effect
 --------------|---------|-------
 `ctrl+c n`    | any     | create a new todo item
+`alt+shift+f` | any     | select the search box
 `ctrl+c d`    | view    | delete current page
-`alt+shift+f` | edit    | send a file, sibling to the current edited file
+`alt+shift+o` | edit    | send a file, sibling to the current edited file
 `alt+shift+s` | edit    | save current edited file
 
 ### Todos
@@ -93,6 +94,24 @@ To mark a todo item as done (but not remove it completely), click on its text. T
 To delete a todo item, click on its *del* button.
 
 NOTE: if a todo item is deleted, when also marked as done, we will write this item to a special page, `/journal/year/month/day.md`.
+
+### Search box
+
+When the search box is selected (`Alt+shift+f`), starting typing will open up a suggestion list. Selecting an entry
+(with arrow keys+enter), and then pressing enter will open up the corresponding page. If you instead want to create a
+page, simply type the wanted path, and press enter.
+
+### Writing content
+
+With the edit page opened (`/page/path/edit`, where `/page/path` is any path), you may start writing some markdown content.
+It is also possible to send files using `alt+shift+o`, which will open up a file selector, enabling you to send files.
+
+Two type of saves are done:
+
+1. A browser-local save: the editor keeps a client-side save of its contents every few seconds.
+2. A backend save, every 20s. The editor's content is sent to the server, and written to the content root for safekeeping
+
+You can trigger a manual save using `alt+shift+s`.
 
 ### Git integration
 

@@ -8,7 +8,7 @@ from flask import (
     redirect,
     render_template,
     request,
-    send_from_directory
+    send_from_directory,
 )
 from flask.views import MethodView
 
@@ -19,13 +19,13 @@ from self_wiki.wiki import Page, RecentFileManager
 
 logger = logging.getLogger(__name__)
 
-RECENT_FILES = RecentFileManager(CONTENT_ROOT)
+RECENT_FILES = RecentFileManager(CONTENT_ROOT, limit=None)
 TODO_LIST = TodoList(pjoin(CONTENT_ROOT, "todos.json"))
 
-FAVICON_PATH = os.environ.get('SELF_WIKI_FAVICON_PATH', '')
-TITLE_PREFIX = os.environ.get('SELF_WIKI_TITLE_PREFIX', '') or 'self.wiki '
-if TITLE_PREFIX[-1] != ' ':
-    TITLE_PREFIX = TITLE_PREFIX + ' '
+FAVICON_PATH = os.environ.get("SELF_WIKI_FAVICON_PATH", "")
+TITLE_PREFIX = os.environ.get("SELF_WIKI_TITLE_PREFIX", "") or "self.wiki "
+if TITLE_PREFIX[-1] != " ":
+    TITLE_PREFIX = TITLE_PREFIX + " "
 
 
 class TodoView(MethodView):
@@ -58,7 +58,7 @@ class TodoView(MethodView):
                     "done" in TODO_LIST.todos[i].keys()
                     and TODO_LIST.todos[i]["done"]
                 ):
-                    write_todo_to_journal(TODO_LIST.todos[i])
+                    write_todo_to_journal(CONTENT_ROOT, TODO_LIST.todos[i])
                 del TODO_LIST.todos[i]
                 TODO_LIST.save()
                 return "OK", 200
@@ -66,6 +66,32 @@ class TodoView(MethodView):
 
 
 app.add_url_rule("/todo", view_func=TodoView.as_view(name="todo"))
+
+
+@app.route("/search")
+def search():
+    """
+    Get a list of files, sorted by recency.
+
+    This endpoint returns the list of all pages. It is NOT a full-text search.
+
+    >>> client = app.test_client()
+    >>> r = client.get('/search?up_to=20')
+    >>> r.status_code
+    200
+    >>> "results" in r.json and len(r.json["results"]) <= 20
+    True
+    """
+    limit = request.args.get("up_to", default=None, type=int)
+    logger.debug("search request with args %s", request.args)
+    res = RECENT_FILES.get(limit)
+    results = []
+    for e in res:
+        d = {}
+        d.update(e)
+        d["path"] = e["path"][len(CONTENT_ROOT) :]  # noqa
+        results.append(d)
+    return jsonify(results)
 
 
 @app.route("/edit/save", defaults={"path": "index"}, methods=["PUT"])
@@ -144,7 +170,7 @@ def page(path):  # noqa: D103
         )
     if str(path).endswith("/"):
         return redirect(path[:-1])
-    page_to_view = Page(path, root=CONTENT_ROOT)
+    page_to_view = Page(path, root=CONTENT_ROOT, shallow=False)
     if page_to_view.markdown == "":
         return redirect(path + "/edit")
     return render_template(
