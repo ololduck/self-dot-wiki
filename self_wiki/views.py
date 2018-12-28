@@ -58,7 +58,7 @@ class TodoView(MethodView):
                     "done" in TODO_LIST.todos[i].keys()
                     and TODO_LIST.todos[i]["done"]
                 ):
-                    write_todo_to_journal(TODO_LIST.todos[i])
+                    write_todo_to_journal(CONTENT_ROOT, TODO_LIST.todos[i])
                 del TODO_LIST.todos[i]
                 TODO_LIST.save()
                 return "OK", 200
@@ -89,7 +89,7 @@ def search():
     for e in res:
         d = {}
         d.update(e)
-        d["path"] = e["path"][len(CONTENT_ROOT) :]
+        d["path"] = e["path"][len(CONTENT_ROOT) :]  # noqa
         results.append(d)
     return jsonify(results)
 

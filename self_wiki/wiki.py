@@ -46,7 +46,7 @@ class Page:
                       recurse a whole directory tree
         """
         if root != "" and root in path:
-            path = path[len(root) :]
+            path = path[len(root) :]  # noqa
         self.root = root
         self._path = path
         self.level = level
