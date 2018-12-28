@@ -8,7 +8,7 @@ from os.path import exists, expanduser, join as pjoin
 
 from self_wiki.wiki import repository
 
-__version__ = "0.7.1"
+__version__ = "0.8.0"
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 _h = logging.StreamHandler()
